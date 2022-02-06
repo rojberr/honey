@@ -1,4 +1,4 @@
-package com.jaybee.honey;
+package com.jaybee.honey.catalog.domain;
 
 import lombok.AllArgsConstructor;
 
