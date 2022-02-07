@@ -1,25 +1,16 @@
 package com.jaybee.honey.catalog.domain;
 
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
-import java.util.StringJoiner;
-
-@AllArgsConstructor
+@Getter
+@ToString
+@RequiredArgsConstructor
 public class Honey {
 
-    Long id;
-    String productName;
-    long price;
-    Integer amount;
-
-
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", Honey.class.getSimpleName() + "[", "]")
-                .add("id=" + id)
-                .add("name='" + productName + "'")
-                .add("price=" + price)
-                .add("ammount=" + amount)
-                .toString();
-    }
+    private final Long id;
+    private final String productName;
+    private final long price;
+    private final Integer amount;
 }
