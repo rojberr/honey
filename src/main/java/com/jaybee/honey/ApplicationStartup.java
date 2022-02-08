@@ -10,7 +10,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class ApplicationStartup implements CommandLineRunner {
+class ApplicationStartup implements CommandLineRunner {
 
     private final CatalogController catalogController;
 
@@ -18,7 +18,7 @@ public class ApplicationStartup implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        List<Honey> honeyList = catalogController.findByName("Small");
+        List<Honey> honeyList = catalogController.findByName("Jar");
         honeyList.forEach(System.out::println);
     }
 }
