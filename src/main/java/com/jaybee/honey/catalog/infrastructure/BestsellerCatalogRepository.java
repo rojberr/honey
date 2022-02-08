@@ -17,8 +17,8 @@ class BestsellerCatalogRepository implements CatalogRepository {
 
     public BestsellerCatalogRepository() {
 
-
-        storage.put(2L, new Honey(2L, "Best Honey Light Honey", 125, 125));
+        storage.put(1L, new Honey(1L, "Dark jar", 100, 100));
+        storage.put(2L, new Honey(2L, "Best Honey Light Honey jar", 125, 125));
     }
 
     @Override
