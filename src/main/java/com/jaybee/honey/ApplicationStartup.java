@@ -1,6 +1,6 @@
 package com.jaybee.honey;
 
-import com.jaybee.honey.catalog.application.CatalogController;
+import com.jaybee.honey.catalog.application.port.CatalogUseCase;
 import com.jaybee.honey.catalog.domain.Honey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -11,16 +11,16 @@ import java.util.List;
 @Component
 class ApplicationStartup implements CommandLineRunner {
 
-    private final CatalogController catalogController;
+    private final CatalogUseCase catalog;
     private final String query;
     private final Long limit;
 
     public ApplicationStartup(
-            CatalogController catalogController,
+            CatalogUseCase catalog,
             @Value("${honey.catalog.query}") String title,
             @Value("${honey.catalog.limit}") Long limit
     ) {
-        this.catalogController = catalogController;
+        this.catalog = catalog;
         this.query = title;
         this.limit = limit;
     }
@@ -28,7 +28,7 @@ class ApplicationStartup implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        List<Honey> honeyList = catalogController.findByName(query);
+        List<Honey> honeyList = catalog.findByName(query);
         honeyList.stream().limit(limit).forEach(System.out::println);
     }
 }

@@ -1,6 +1,5 @@
 package com.jaybee.honey.catalog.application;
 
-import com.jaybee.honey.catalog.domain.CatalogService;
 import com.jaybee.honey.catalog.domain.Honey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
