@@ -2,15 +2,17 @@ package com.jaybee.honey.catalog.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Getter
+@Setter
 @ToString
 @RequiredArgsConstructor
 public class Honey {
 
-    private final Long id;
-    private final String productName;
-    private final long price;
-    private final Integer amount;
+    private Long id;
+    private String productName;
+    private long price;
+    private Integer amount;
 }

@@ -8,18 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class HealthHoneyRepository implements CatalogRepository {
 
     private final Map<Long, Honey> storage = new ConcurrentHashMap<>();
-
+    private final AtomicLong ID_NEXT_VALUE = new AtomicLong(0L);
 
     public HealthHoneyRepository() {
 
-        storage.put(1L, new Honey(1L, "Big jar", 75, 75));
-        storage.put(2L, new Honey(2L, "Medium jar", 50, 50));
-        storage.put(3L, new Honey(3L, "Small jar", 25, 25));
+//        storage.put(1L, new Honey(1L, "Big jar", 75, 75));
+//        storage.put(2L, new Honey(2L, "Medium jar", 50, 50));
+//        storage.put(3L, new Honey(3L, "Small jar", 25, 25));
     }
 
     @Override
@@ -31,5 +32,12 @@ public class HealthHoneyRepository implements CatalogRepository {
     @Override
     public void save(Honey honey) {
 
+        long nextId = nextId();
+        honey.setId(nextId);
+        storage.put(nextId, honey);
+    }
+
+    private long nextId() {
+        return ID_NEXT_VALUE.getAndIncrement();
     }
 }
