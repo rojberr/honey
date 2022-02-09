@@ -15,4 +15,12 @@ public class Honey {
     private String productName;
     private long price;
     private Integer amount;
+
+
+    public Honey(String productName, long price, Integer amount) {
+
+        this.productName = productName;
+        this.price = price;
+        this.amount = amount;
+    }
 }

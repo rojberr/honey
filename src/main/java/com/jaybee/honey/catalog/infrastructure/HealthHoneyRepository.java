@@ -16,12 +16,6 @@ public class HealthHoneyRepository implements CatalogRepository {
     private final Map<Long, Honey> storage = new ConcurrentHashMap<>();
     private final AtomicLong ID_NEXT_VALUE = new AtomicLong(0L);
 
-    public HealthHoneyRepository() {
-
-//        storage.put(1L, new Honey(1L, "Big jar", 75, 75));
-//        storage.put(2L, new Honey(2L, "Medium jar", 50, 50));
-//        storage.put(3L, new Honey(3L, "Small jar", 25, 25));
-    }
 
     @Override
     public List<Honey> findAll() {

@@ -16,18 +16,31 @@ class ApplicationStartup implements CommandLineRunner {
     private final Long limit;
 
     public ApplicationStartup(
+
             CatalogUseCase catalog,
-            @Value("${honey.catalog.query}") String title,
+            @Value("${honey.catalog.query}") String productName,
             @Value("${honey.catalog.limit}") Long limit
     ) {
         this.catalog = catalog;
-        this.query = title;
+        this.query = productName;
         this.limit = limit;
     }
 
     @Override
     public void run(String... args) {
 
+        initData();
+        findByName();
+    }
+
+    private void initData() {
+
+        catalog.addHoney(new CatalogUseCase.CreateHoneyCommand("Big jar", 75, 75));
+        catalog.addHoney(new CatalogUseCase.CreateHoneyCommand( "Medium jar", 50, 50));
+        catalog.addHoney(new CatalogUseCase.CreateHoneyCommand( "Small jar", 25, 25));
+    }
+
+    private void findByName() {
         List<Honey> honeyList = catalog.findByName(query);
         honeyList.stream().limit(limit).forEach(System.out::println);
     }

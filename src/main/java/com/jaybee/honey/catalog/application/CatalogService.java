@@ -22,7 +22,7 @@ class CatalogService implements CatalogUseCase {
 
         return repository.findAll()
                 .stream()
-                .filter(honey -> honey.getProductName().startsWith(productName))
+                .filter(honey -> honey.getProductName().contains(productName))
                 .collect(Collectors.toList());
     }
 
@@ -39,9 +39,12 @@ class CatalogService implements CatalogUseCase {
     }
 
     @Override
-    public void addBook() {
+    public void addHoney(CreateHoneyCommand command) {
 
-
+        Honey honey = new Honey(command.getProductName(),
+                command.getPrice(),
+                command.getAmount());
+        repository.save(honey);
     }
 
     @Override
