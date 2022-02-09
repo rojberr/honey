@@ -10,8 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-public
-class HealthHoneyRepository implements CatalogRepository {
+public class HealthHoneyRepository implements CatalogRepository {
 
     private final Map<Long, Honey> storage = new ConcurrentHashMap<>();
 
@@ -27,5 +26,10 @@ class HealthHoneyRepository implements CatalogRepository {
     public List<Honey> findAll() {
 
         return new ArrayList<>(storage.values());
+    }
+
+    @Override
+    public void save(Honey honey) {
+
     }
 }
