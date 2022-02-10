@@ -1,6 +1,7 @@
 package com.jaybee.honey.catalog.application.port;
 
 import com.jaybee.honey.catalog.domain.Honey;
+import lombok.Builder;
 import lombok.Value;
 
 import java.util.List;
@@ -18,7 +19,8 @@ public interface CatalogUseCase {
 
     void addHoney(CreateHoneyCommand command);
 
-    public void removeById();
+    public void removeById(Long id);
+
 
     UpdateHoneyResponse updateHoney(UpdateHoneyCommand command);
 
@@ -31,12 +33,26 @@ public interface CatalogUseCase {
     }
 
     @Value
+    @Builder
     class UpdateHoneyCommand {
 
         Long id;
         String productName;
-        long price;
+        Long price;
         Integer amount;
+
+        public Honey updateFields(Honey honey) {
+            if (productName != null) {
+                honey.setProductName(productName);
+            }
+            if (price != null) {
+                honey.setPrice(price);
+            }
+            if (amount != null) {
+                honey.setAmount(amount);
+            }
+            return honey;
+        }
     }
 
     @Value

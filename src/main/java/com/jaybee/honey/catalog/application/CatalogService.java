@@ -53,8 +53,9 @@ class CatalogService implements CatalogUseCase {
     }
 
     @Override
-    public void removeById() {
+    public void removeById(Long id) {
 
+        repository.removeById(id);
     }
 
     @Override
@@ -63,10 +64,8 @@ class CatalogService implements CatalogUseCase {
         return repository
                 .findById(command.getId())
                 .map(honey -> {
-                    honey.setProductName(command.getProductName());
-                    honey.setPrice(command.getPrice());
-                    honey.setAmount(command.getAmount());
-                    repository.save(honey);
+                    Honey updatedHoney = command.updateFields(honey);
+                    repository.save(updatedHoney);
                     return UpdateHoneyResponse.SUCCESS;
                 })
                 .orElseGet(() -> new UpdateHoneyResponse(false, Collections.singletonList("Honey not found with id: " + command.getId())));

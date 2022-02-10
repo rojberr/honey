@@ -17,5 +17,4 @@ public class CatalogController {
 
         return service.findByName(name);
     }
-
 }

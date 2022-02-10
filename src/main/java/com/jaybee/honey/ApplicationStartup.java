@@ -2,6 +2,7 @@ package com.jaybee.honey;
 
 import com.jaybee.honey.catalog.application.port.CatalogUseCase;
 import com.jaybee.honey.catalog.application.port.CatalogUseCase.UpdateHoneyCommand;
+import com.jaybee.honey.catalog.application.port.CatalogUseCase.UpdateHoneyResponse;
 import com.jaybee.honey.catalog.domain.Honey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -53,13 +54,12 @@ class ApplicationStartup implements CommandLineRunner {
         System.out.println("Updating Honey...");
         catalog.findOneByNameAndAmount("jar", 25)
                 .ifPresent(honey -> {
-                    UpdateHoneyCommand command = new UpdateHoneyCommand(
-                            honey.getId(),
-                            honey.getProductName(),
-                            honey.getPrice(),
-                            honey.getAmount()
-                    );
-                    catalog.updateHoney(command);
+                    UpdateHoneyCommand command = UpdateHoneyCommand.builder()
+                            .id(honey.getId())
+                            .productName("jar")
+                            .build();
+                    UpdateHoneyResponse response = catalog.updateHoney(command);
+                    System.out.println("Updating book result: " + response.isSuccess());
                 });
     }
 }

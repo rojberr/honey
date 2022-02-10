@@ -10,4 +10,6 @@ public interface CatalogRepository {
     void save(Honey honey);
 
     Optional<Honey> findById(Long id);
+
+    void removeById(Long id);
 }
