@@ -4,6 +4,7 @@ import com.jaybee.honey.catalog.domain.Honey;
 import lombok.Builder;
 import lombok.Value;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +29,7 @@ public interface CatalogUseCase {
     class CreateHoneyCommand {
 
         String productName;
-        long price;
+        BigDecimal price;
         Integer amount;
     }
 
@@ -38,7 +39,7 @@ public interface CatalogUseCase {
 
         Long id;
         String productName;
-        Long price;
+        BigDecimal price;
         Integer amount;
 
         public Honey updateFields(Honey honey) {

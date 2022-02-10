@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @ToString
@@ -13,11 +15,11 @@ public class Honey {
 
     private Long id;
     private String productName;
-    private long price;
+    private BigDecimal price;
     private Integer amount;
 
 
-    public Honey(String productName, long price, Integer amount) {
+    public Honey(String productName, BigDecimal price, Integer amount) {
 
         this.productName = productName;
         this.price = price;
