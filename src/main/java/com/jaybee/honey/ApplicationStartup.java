@@ -1,6 +1,7 @@
 package com.jaybee.honey;
 
 import com.jaybee.honey.catalog.application.port.CatalogUseCase;
+import com.jaybee.honey.catalog.application.port.CatalogUseCase.UpdateHoneyCommand;
 import com.jaybee.honey.catalog.domain.Honey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -31,17 +32,34 @@ class ApplicationStartup implements CommandLineRunner {
 
         initData();
         findByName();
+        findAndUpdate();
+        findByName();
     }
 
     private void initData() {
 
         catalog.addHoney(new CatalogUseCase.CreateHoneyCommand("Big jar", 75, 75));
-        catalog.addHoney(new CatalogUseCase.CreateHoneyCommand( "Medium jar", 50, 50));
-        catalog.addHoney(new CatalogUseCase.CreateHoneyCommand( "Small jar", 25, 25));
+        catalog.addHoney(new CatalogUseCase.CreateHoneyCommand("Medium jar", 50, 50));
+        catalog.addHoney(new CatalogUseCase.CreateHoneyCommand("Small jar", 25, 25));
     }
 
     private void findByName() {
         List<Honey> honeyList = catalog.findByName(query);
         honeyList.stream().limit(limit).forEach(System.out::println);
+    }
+
+    private void findAndUpdate() {
+
+        System.out.println("Updating Honey...");
+        catalog.findOneByNameAndAmount("jar", 25)
+                .ifPresent(honey -> {
+                    UpdateHoneyCommand command = new UpdateHoneyCommand(
+                            honey.getId(),
+                            honey.getProductName(),
+                            honey.getPrice(),
+                            honey.getAmount()
+                    );
+                    catalog.updateHoney(command);
+                });
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -26,9 +27,19 @@ public class HealthHoneyRepository implements CatalogRepository {
     @Override
     public void save(Honey honey) {
 
-        long nextId = nextId();
-        honey.setId(nextId);
-        storage.put(nextId, honey);
+        if (honey.getId() != null) {
+            storage.put(honey.getId(), honey);
+        } else {
+            long nextId = nextId();
+            honey.setId(nextId);
+            storage.put(nextId, honey);
+        }
+    }
+
+    @Override
+    public Optional<Honey> findById(Long id) {
+
+        return Optional.ofNullable(storage.get(id));
     }
 
     private long nextId() {

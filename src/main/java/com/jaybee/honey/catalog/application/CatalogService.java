@@ -6,6 +6,7 @@ import com.jaybee.honey.catalog.domain.Honey;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,13 +30,17 @@ class CatalogService implements CatalogUseCase {
     @Override
     public List<Honey> findAll() {
 
-        return null;
+        return repository.findAll();
     }
 
     @Override
-    public Optional<Honey> findByNameAndPrice(String name, long price) {
+    public Optional<Honey> findOneByNameAndAmount(String productName, Integer amount) {
 
-        return Optional.empty();
+        return repository.findAll()
+                .stream()
+                .filter(honey -> honey.getProductName().contains(productName))
+                .filter(honey -> honey.getAmount().equals(amount))
+                .findFirst();
     }
 
     @Override
@@ -53,7 +58,17 @@ class CatalogService implements CatalogUseCase {
     }
 
     @Override
-    public void updateHoney() {
+    public UpdateHoneyResponse updateHoney(UpdateHoneyCommand command) {
 
+        return repository
+                .findById(command.getId())
+                .map(honey -> {
+                    honey.setProductName(command.getProductName());
+                    honey.setPrice(command.getPrice());
+                    honey.setAmount(command.getAmount());
+                    repository.save(honey);
+                    return UpdateHoneyResponse.SUCCESS;
+                })
+                .orElseGet(() -> new UpdateHoneyResponse(false, Collections.singletonList("Honey not found with id: " + command.getId())));
     }
 }
