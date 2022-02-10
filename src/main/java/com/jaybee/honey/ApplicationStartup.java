@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Component
@@ -39,9 +40,9 @@ class ApplicationStartup implements CommandLineRunner {
 
     private void initData() {
 
-        catalog.addHoney(new CatalogUseCase.CreateHoneyCommand("Big jar", 75, 75));
-        catalog.addHoney(new CatalogUseCase.CreateHoneyCommand("Medium jar", 50, 50));
-        catalog.addHoney(new CatalogUseCase.CreateHoneyCommand("Small jar", 25, 25));
+        catalog.addHoney(new CatalogUseCase.CreateHoneyCommand("Big jar", BigDecimal.valueOf(75), 75));
+        catalog.addHoney(new CatalogUseCase.CreateHoneyCommand("Medium jar", BigDecimal.valueOf(50), 50));
+        catalog.addHoney(new CatalogUseCase.CreateHoneyCommand("Small jar", BigDecimal.valueOf(25), 25));
     }
 
     private void findByName() {

@@ -12,7 +12,9 @@ import java.util.List;
 public class Order {
 
     private Long id;
-    private OrderStatus status;
+
+    @Builder.Default
+    private OrderStatus status = OrderStatus.NEW;
     private Recipient recipient;
     private List<OrderItem> items;
     private LocalDateTime createdAt;
