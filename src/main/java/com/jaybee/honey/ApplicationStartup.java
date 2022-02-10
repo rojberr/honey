@@ -53,11 +53,20 @@ class ApplicationStartup implements CommandLineRunner {
         Honey small_jar = catalog.findOneByName("Small jar").orElseThrow(() -> new IllegalStateException("Can't find the product"));
 
         // create recipient
+        Recipient recipient = Recipient
+                .builder()
+                .name("Max Mustermann")
+                .phone("+49 123456789")
+                .street("Unter den Linden 1")
+                .city("Berlin")
+                .zipCode("12369")
+                .email("max.mustermann@gmx.de")
+                .build();
 
         // place order command
         PlaceOrderCommand command = PlaceOrderCommand
                 .builder()
-                .recipient(null)
+                .recipient(recipient)
                 .item(new OrderItem(big_jar, 16))
                 .item(new OrderItem(small_jar, 2))
                 .build();

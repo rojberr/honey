@@ -34,7 +34,7 @@ public interface PlaceOrderUseCase {
             return new PlaceOrderResponse(true, orderId, emptyList());
         }
 
-        public static PlaceOrderResponse failure(String ... errors) {
+        public static PlaceOrderResponse failure(String... errors) {
             return new PlaceOrderResponse(false, null, Arrays.asList(errors));
         }
 
