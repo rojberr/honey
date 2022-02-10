@@ -2,6 +2,7 @@ package com.jaybee.honey.order.infrastructure;
 
 import com.jaybee.honey.order.domain.Order;
 import com.jaybee.honey.order.domain.OrderRepository;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Repository
 public class MemoryOrderRepositoryImpl implements OrderRepository {
 
     private final Map<Long, Order> storage = new ConcurrentHashMap<>();

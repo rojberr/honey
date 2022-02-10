@@ -14,6 +14,8 @@ public interface CatalogUseCase {
 
     public List<Honey> findByName(String productName);
 
+    public Optional<Honey> findOneByName(String productName);
+
     public List<Honey> findAll();
 
     Optional<Honey> findOneByNameAndAmount(String productName, Integer amount);
@@ -31,6 +33,10 @@ public interface CatalogUseCase {
         String productName;
         BigDecimal price;
         Integer amount;
+
+        public Honey toHoney() {
+            return new Honey(productName, price, amount);
+        }
     }
 
     @Value

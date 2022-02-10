@@ -19,7 +19,7 @@ public class Order {
     private List<OrderItem> items;
     private LocalDateTime createdAt;
 
-    BigDecimal totalPrice() {
+    public BigDecimal totalPrice() {
 
         return items.stream()
                 .map(item -> item.getHoney().getPrice().multiply(new BigDecimal(item.getQuantity())))
