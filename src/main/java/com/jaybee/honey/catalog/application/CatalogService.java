@@ -19,6 +19,11 @@ class CatalogService implements CatalogUseCase {
 
 
     @Override
+    public Optional<Honey> findById(Long id) {
+        return repository.findById(id);
+    }
+
+    @Override
     public List<Honey> findByName(String productName) {
 
         return repository.findAll()

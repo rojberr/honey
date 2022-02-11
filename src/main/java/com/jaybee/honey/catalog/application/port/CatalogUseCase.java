@@ -12,6 +12,8 @@ import static java.util.Collections.emptyList;
 
 public interface CatalogUseCase {
 
+    Optional<Honey> findById(Long id);
+
     public List<Honey> findByName(String productName);
 
     public Optional<Honey> findOneByName(String productName);
