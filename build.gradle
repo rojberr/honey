@@ -21,6 +21,7 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.6.3'
+	implementation 'org.hibernate.validator:hibernate-validator:7.0.2.Final'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

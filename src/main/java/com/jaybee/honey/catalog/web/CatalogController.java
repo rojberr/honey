@@ -4,11 +4,16 @@ import com.jaybee.honey.catalog.application.port.CatalogUseCase;
 import com.jaybee.honey.catalog.domain.Honey;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
@@ -56,7 +61,7 @@ public class CatalogController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Void> addHoney(@RequestBody RestCreateBookCommand command) {
+    public ResponseEntity<Void> addHoney(@Valid @RequestBody RestCreateBookCommand command) {
         Honey honey = catalog.addHoney(command.toCommand());
         URI uri = createdHoneyURI(honey);
         return ResponseEntity.created(uri).build();
@@ -75,13 +80,17 @@ public class CatalogController {
 
     @Data
     private static class RestCreateBookCommand {
+        @NotBlank
         private String name;
+        @NotNull
+        @DecimalMin("0.00")
         private BigDecimal price;
+        @NotNull
+        @DecimalMin("0.00")
         private Integer amount;
 
         CreateHoneyCommand toCommand() {
             return new CreateHoneyCommand(name, price, amount);
         }
     }
-
 }
