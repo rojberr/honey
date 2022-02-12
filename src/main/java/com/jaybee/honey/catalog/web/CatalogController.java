@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequestMapping(value = "/catalog")
 @RestController
@@ -19,15 +21,30 @@ public class CatalogController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Honey> getAll() {
-
-        return catalog.findAll();
+    public List<Honey> getAll(
+            @RequestParam Optional<String> name,
+            @RequestParam Optional<Integer> amount,
+            @RequestParam(defaultValue = "false") boolean debug,
+            @RequestParam(defaultValue = "10") int limit
+    ) {
+        if (name.isPresent() && amount.isPresent()) {
+            return catalog.findByNameAndAmount(name.get(), amount.get());
+        } else if (name.isPresent()) {
+            return catalog.findByName(name.get());
+        } else if (amount.isPresent()) {
+            return catalog.findOneByAmount(amount.get())
+                    .stream()
+                    .collect(Collectors.toList());
+        }
+        return catalog.findAll().stream().limit(limit).collect(Collectors.toList());
     }
 
     @GetMapping(params = {"name"})
-    public List<Honey> getAllFiltered(@RequestParam String name) {
-
-        return catalog.findByName(name);
+    public List<Honey> getAllFiltered(
+            @RequestParam Optional<String> name,
+            @RequestParam Optional<Long> id) {
+        return null;
+//        return catalog.findByName(name);
     }
 
     @GetMapping(value = "/{id}")

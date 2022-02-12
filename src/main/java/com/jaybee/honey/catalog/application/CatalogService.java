@@ -19,13 +19,17 @@ class CatalogService implements CatalogUseCase {
 
 
     @Override
+    public List<Honey> findAll() {
+        return repository.findAll();
+    }
+
+    @Override
     public Optional<Honey> findById(Long id) {
         return repository.findById(id);
     }
 
     @Override
     public List<Honey> findByName(String productName) {
-
         return repository.findAll()
                 .stream()
                 .filter(honey -> honey.getProductName().toLowerCase().contains(productName.toLowerCase()))
@@ -34,7 +38,6 @@ class CatalogService implements CatalogUseCase {
 
     @Override
     public Optional<Honey> findOneByName(String productName) {
-
         return repository.findAll()
                 .stream()
                 .filter(honey -> honey.getProductName().contains(productName))
@@ -42,9 +45,19 @@ class CatalogService implements CatalogUseCase {
     }
 
     @Override
-    public List<Honey> findAll() {
+    public Optional<Honey> findOneByPrice(Long price) {
+        return repository.findAll()
+                .stream()
+                .filter(honey -> honey.getPrice().equals(price))
+                .findFirst();
+    }
 
-        return repository.findAll();
+    @Override
+    public Optional<Honey> findOneByAmount(Integer amount) {
+        return repository.findAll()
+                .stream()
+                .filter(honey -> honey.getAmount().equals(amount)
+                ).findFirst();
     }
 
     @Override
@@ -55,6 +68,16 @@ class CatalogService implements CatalogUseCase {
                 .filter(honey -> honey.getProductName().contains(productName))
                 .filter(honey -> honey.getAmount().equals(amount))
                 .findFirst();
+    }
+
+    @Override
+    public List<Honey> findByNameAndAmount(String productName, Integer amount) {
+
+        return repository.findAll()
+                .stream()
+                .filter(honey -> honey.getProductName().contains(productName))
+                .filter(honey -> honey.getAmount().equals(amount))
+                .collect(Collectors.toList());
     }
 
     @Override

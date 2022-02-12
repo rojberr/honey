@@ -12,13 +12,19 @@ import static java.util.Collections.emptyList;
 
 public interface CatalogUseCase {
 
+    public List<Honey> findAll();
+
     Optional<Honey> findById(Long id);
 
     public List<Honey> findByName(String productName);
 
     public Optional<Honey> findOneByName(String productName);
 
-    public List<Honey> findAll();
+    public Optional<Honey> findOneByPrice(Long price);
+
+    public Optional<Honey> findOneByAmount(Integer amount);
+
+    List<Honey> findByNameAndAmount(String productName, Integer amount);
 
     Optional<Honey> findOneByNameAndAmount(String productName, Integer amount);
 
