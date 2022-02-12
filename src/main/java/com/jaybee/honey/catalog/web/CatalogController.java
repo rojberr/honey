@@ -7,8 +7,10 @@ import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,9 +56,15 @@ public class CatalogController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Honey addHoney(@RequestBody RestCreateBookCommand command) {
+    public ResponseEntity<Void> addHoney(@RequestBody RestCreateBookCommand command) {
         Honey honey = catalog.addHoney(command.toCommand());
-        return honey;
+        URI uri = createdHoneyURI(honey);
+        return ResponseEntity.created(uri).build();
+    }
+
+    private URI createdHoneyURI(Honey honey) {
+        return ServletUriComponentsBuilder.fromCurrentRequestUri()
+                .path("/" + honey.getId().toString()).build().toUri();
     }
 
     @Data
