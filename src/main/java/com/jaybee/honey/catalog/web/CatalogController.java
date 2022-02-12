@@ -62,6 +62,12 @@ public class CatalogController {
         return ResponseEntity.created(uri).build();
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(@PathVariable Long id) {
+        catalog.removeById(id);
+    }
+
     private URI createdHoneyURI(Honey honey) {
         return ServletUriComponentsBuilder.fromCurrentRequestUri()
                 .path("/" + honey.getId().toString()).build().toUri();
