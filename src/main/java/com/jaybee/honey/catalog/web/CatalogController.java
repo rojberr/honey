@@ -4,9 +4,10 @@ import com.jaybee.honey.catalog.application.port.CatalogUseCase;
 import com.jaybee.honey.catalog.domain.Honey;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -16,8 +17,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.net.URI;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.jaybee.honey.catalog.application.port.CatalogUseCase.CreateHoneyCommand;
@@ -76,6 +76,23 @@ public class CatalogController {
     private URI createdHoneyURI(Honey honey) {
         return ServletUriComponentsBuilder.fromCurrentRequestUri()
                 .path("/" + honey.getId().toString()).build().toUri();
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleException(MethodArgumentNotValidException exception) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        body.put("timestamp", new Date());
+        body.put("status", status.value());
+        // Get all errors
+        List<String> errors = exception
+                .getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(x -> x.getField() + " - " + x.getDefaultMessage())
+                .collect(Collectors.toList());
+        body.put("errors", errors);
+        return new ResponseEntity<>(body, status);
     }
 
     @Data
