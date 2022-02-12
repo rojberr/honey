@@ -28,7 +28,7 @@ class CatalogService implements CatalogUseCase {
 
         return repository.findAll()
                 .stream()
-                .filter(honey -> honey.getProductName().contains(productName))
+                .filter(honey -> honey.getProductName().toLowerCase().contains(productName.toLowerCase()))
                 .collect(Collectors.toList());
     }
 

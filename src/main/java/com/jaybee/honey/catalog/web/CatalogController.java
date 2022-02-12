@@ -24,12 +24,18 @@ public class CatalogController {
         return catalog.findAll();
     }
 
+    @GetMapping(params = {"name"})
+    public List<Honey> getAllFiltered(@RequestParam String name) {
+
+        return catalog.findByName(name);
+    }
+
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
 
         return catalog
                 .findById(id)
-                .map(ResponseEntity :: ok)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 }
