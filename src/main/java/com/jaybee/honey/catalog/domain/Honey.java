@@ -14,14 +14,14 @@ import java.math.BigDecimal;
 public class Honey {
 
     private Long id;
-    private String productName;
+    private String name;
     private BigDecimal price;
     private Integer amount;
 
 
     public Honey(String productName, BigDecimal price, Integer amount) {
 
-        this.productName = productName;
+        this.name = productName;
         this.price = price;
         this.amount = amount;
     }

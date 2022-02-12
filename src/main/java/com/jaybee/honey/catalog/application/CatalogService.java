@@ -32,7 +32,7 @@ class CatalogService implements CatalogUseCase {
     public List<Honey> findByName(String productName) {
         return repository.findAll()
                 .stream()
-                .filter(honey -> honey.getProductName().toLowerCase().contains(productName.toLowerCase()))
+                .filter(honey -> honey.getName().toLowerCase().contains(productName.toLowerCase()))
                 .collect(Collectors.toList());
     }
 
@@ -40,7 +40,7 @@ class CatalogService implements CatalogUseCase {
     public Optional<Honey> findOneByName(String productName) {
         return repository.findAll()
                 .stream()
-                .filter(honey -> honey.getProductName().contains(productName))
+                .filter(honey -> honey.getName().contains(productName))
                 .findFirst();
     }
 
@@ -65,7 +65,7 @@ class CatalogService implements CatalogUseCase {
 
         return repository.findAll()
                 .stream()
-                .filter(honey -> honey.getProductName().contains(productName))
+                .filter(honey -> honey.getName().contains(productName))
                 .filter(honey -> honey.getAmount().equals(amount))
                 .findFirst();
     }
@@ -75,7 +75,7 @@ class CatalogService implements CatalogUseCase {
 
         return repository.findAll()
                 .stream()
-                .filter(honey -> honey.getProductName().contains(productName))
+                .filter(honey -> honey.getName().contains(productName))
                 .filter(honey -> honey.getAmount().equals(amount))
                 .collect(Collectors.toList());
     }

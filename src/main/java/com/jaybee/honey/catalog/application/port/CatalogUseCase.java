@@ -38,12 +38,12 @@ public interface CatalogUseCase {
     @Value
     class CreateHoneyCommand {
 
-        String productName;
+        String name;
         BigDecimal price;
         Integer amount;
 
         public Honey toHoney() {
-            return new Honey(productName, price, amount);
+            return new Honey(name, price, amount);
         }
     }
 
@@ -52,13 +52,13 @@ public interface CatalogUseCase {
     class UpdateHoneyCommand {
 
         Long id;
-        String productName;
+        String name;
         BigDecimal price;
         Integer amount;
 
         public Honey updateFields(Honey honey) {
-            if (productName != null) {
-                honey.setProductName(productName);
+            if (name != null) {
+                honey.setName(name);
             }
             if (price != null) {
                 honey.setPrice(price);

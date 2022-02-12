@@ -3,13 +3,17 @@ package com.jaybee.honey.catalog.web;
 import com.jaybee.honey.catalog.application.port.CatalogUseCase;
 import com.jaybee.honey.catalog.domain.Honey;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.jaybee.honey.catalog.application.port.CatalogUseCase.CreateHoneyCommand;
 
 @RequestMapping(value = "/catalog")
 @RestController
@@ -47,4 +51,21 @@ public class CatalogController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @PostMapping
+    public void addBook(@RequestBody RestCreateBookCommand command) {
+        catalog.addHoney(command.toCommand());
+    }
+
+    @Data
+    private static class RestCreateBookCommand {
+        private String name;
+        private BigDecimal price;
+        private Integer amount;
+
+        CreateHoneyCommand toCommand() {
+            return new CreateHoneyCommand(name, price, amount);
+        }
+    }
+
 }

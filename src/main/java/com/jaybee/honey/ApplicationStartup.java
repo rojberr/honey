@@ -105,7 +105,7 @@ class ApplicationStartup implements CommandLineRunner {
                 .ifPresent(honey -> {
                     UpdateHoneyCommand command = UpdateHoneyCommand.builder()
                             .id(honey.getId())
-                            .productName("Small jar")
+                            .name("Small jar")
                             .build();
                     UpdateHoneyResponse response = catalog.updateHoney(command);
                     System.out.println("Updating book result: " + response.isSuccess());
