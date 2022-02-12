@@ -39,14 +39,6 @@ public class CatalogController {
         return catalog.findAll().stream().limit(limit).collect(Collectors.toList());
     }
 
-    @GetMapping(params = {"name"})
-    public List<Honey> getAllFiltered(
-            @RequestParam Optional<String> name,
-            @RequestParam Optional<Long> id) {
-        return null;
-//        return catalog.findByName(name);
-    }
-
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
 
