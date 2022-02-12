@@ -53,8 +53,10 @@ public class CatalogController {
     }
 
     @PostMapping
-    public void addBook(@RequestBody RestCreateBookCommand command) {
-        catalog.addHoney(command.toCommand());
+    @ResponseStatus(HttpStatus.CREATED)
+    public Honey addHoney(@RequestBody RestCreateBookCommand command) {
+        Honey honey = catalog.addHoney(command.toCommand());
+        return honey;
     }
 
     @Data

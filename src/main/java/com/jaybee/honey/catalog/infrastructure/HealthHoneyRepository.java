@@ -25,7 +25,7 @@ public class HealthHoneyRepository implements CatalogRepository {
     }
 
     @Override
-    public void save(Honey honey) {
+    public Honey save(Honey honey) {
 
         if (honey.getId() != null) {
             storage.put(honey.getId(), honey);
@@ -34,6 +34,7 @@ public class HealthHoneyRepository implements CatalogRepository {
             honey.setId(nextId);
             storage.put(nextId, honey);
         }
+        return honey;
     }
 
     @Override

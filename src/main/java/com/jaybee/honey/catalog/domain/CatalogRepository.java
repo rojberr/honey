@@ -7,7 +7,7 @@ public interface CatalogRepository {
 
     List<Honey> findAll();
 
-    void save(Honey honey);
+    Honey save(Honey honey);
 
     Optional<Honey> findById(Long id);
 

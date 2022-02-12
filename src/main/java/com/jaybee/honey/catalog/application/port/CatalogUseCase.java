@@ -28,7 +28,7 @@ public interface CatalogUseCase {
 
     Optional<Honey> findOneByNameAndAmount(String productName, Integer amount);
 
-    void addHoney(CreateHoneyCommand command);
+    Honey addHoney(CreateHoneyCommand command);
 
     public void removeById(Long id);
 

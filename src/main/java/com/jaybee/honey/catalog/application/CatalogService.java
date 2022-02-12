@@ -81,10 +81,9 @@ class CatalogService implements CatalogUseCase {
     }
 
     @Override
-    public void addHoney(CreateHoneyCommand command) {
-
+    public Honey addHoney(CreateHoneyCommand command) {
         Honey honey = command.toHoney();
-        repository.save(honey);
+        return repository.save(honey);
     }
 
     @Override
