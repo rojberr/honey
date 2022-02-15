@@ -6,9 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
@@ -53,6 +53,10 @@ public class CatalogController {
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
 
+        // Showing how to throw exception inside of a method
+        if (id.equals(42L)) {
+            throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "I'm a teapot. Sorry");
+        }
         return catalog
                 .findById(id)
                 .map(ResponseEntity::ok)
