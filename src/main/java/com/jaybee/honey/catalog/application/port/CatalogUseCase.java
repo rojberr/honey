@@ -33,8 +33,17 @@ public interface CatalogUseCase {
 
     public void removeById(Long id);
 
+    void updateHoneyCover(UpdateHoneyCoverCommand command);
 
     UpdateHoneyResponse updateHoney(UpdateHoneyCommand command);
+
+    @Value
+    class UpdateHoneyCoverCommand {
+        Long id;
+        byte[] file;
+        String contentType;
+        String filename;
+    }
 
     @Value
     class CreateHoneyCommand {

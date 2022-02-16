@@ -93,6 +93,16 @@ class CatalogService implements CatalogUseCase {
     }
 
     @Override
+    public void updateHoneyCover(UpdateHoneyCoverCommand command) {
+        int length = command.getFile().length;
+        System.out.println("Received honey: " + command.getFilename()
+                + " bytes: " + length);
+        repository.findById(command.getId())
+                .ifPresent(honey -> {
+                });
+    }
+
+    @Override
     public UpdateHoneyResponse updateHoney(UpdateHoneyCommand command) {
 
         return repository

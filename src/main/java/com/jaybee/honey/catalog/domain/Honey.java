@@ -17,6 +17,7 @@ public class Honey {
     private String name;
     private BigDecimal price;
     private Integer amount;
+    private String coverId;
 
 
     public Honey(String productName, BigDecimal price, Integer amount) {
