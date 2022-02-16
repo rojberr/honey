@@ -3,6 +3,9 @@ package com.jaybee.honey.catalog.application;
 import com.jaybee.honey.catalog.application.port.CatalogUseCase;
 import com.jaybee.honey.catalog.domain.CatalogRepository;
 import com.jaybee.honey.catalog.domain.Honey;
+import com.jaybee.honey.uploads.application.UploadUseCase;
+import com.jaybee.honey.uploads.application.UploadUseCase.SaveUploadCommand;
+import com.jaybee.honey.uploads.domain.Upload;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,7 @@ import java.util.stream.Collectors;
 class CatalogService implements CatalogUseCase {
 
     private final CatalogRepository repository;
+    private final UploadUseCase upload;
 
 
     @Override
@@ -99,6 +103,9 @@ class CatalogService implements CatalogUseCase {
                 + " bytes: " + length);
         repository.findById(command.getId())
                 .ifPresent(honey -> {
+                    Upload savedUpload = upload.save(new SaveUploadCommand(command.getFilename(), command.getFile(), command.getContentType()));
+                    honey.setCoverId(savedUpload.getId());
+                    repository.save(honey);
                 });
     }
 
