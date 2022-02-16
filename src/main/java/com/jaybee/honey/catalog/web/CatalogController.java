@@ -1,6 +1,8 @@
 package com.jaybee.honey.catalog.web;
 
 import com.jaybee.honey.catalog.application.port.CatalogUseCase;
+import com.jaybee.honey.catalog.application.port.CatalogUseCase.UpdateHoneyCommand;
+import com.jaybee.honey.catalog.application.port.CatalogUseCase.UpdateHoneyResponse;
 import com.jaybee.honey.catalog.domain.Honey;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -63,10 +65,21 @@ public class CatalogController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void updateHoney(@PathVariable Long id,
+                            @RequestBody RestHoneyCommand command) {
+        UpdateHoneyResponse response = catalog.updateHoney(command.toUpdateCommand(id));
+        if (!response.isSuccess()) {
+            String message = String.join(", ", response.getErrors());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
+        }
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Void> addHoney(@Valid @RequestBody RestCreateBookCommand command) {
-        Honey honey = catalog.addHoney(command.toCommand());
+    public ResponseEntity<Void> addHoney(@Valid @RequestBody CatalogController.RestHoneyCommand command) {
+        Honey honey = catalog.addHoney(command.toCreateCommand());
         URI uri = createdHoneyURI(honey);
         return ResponseEntity.created(uri).build();
     }
@@ -100,7 +113,7 @@ public class CatalogController {
     }
 
     @Data
-    private static class RestCreateBookCommand {
+    private static class RestHoneyCommand {
         @NotBlank
         private String name;
         @NotNull
@@ -110,8 +123,13 @@ public class CatalogController {
         @DecimalMin("0.00")
         private Integer amount;
 
-        CreateHoneyCommand toCommand() {
+        CreateHoneyCommand toCreateCommand() {
             return new CreateHoneyCommand(name, price, amount);
+        }
+
+
+        UpdateHoneyCommand toUpdateCommand(Long id) {
+            return new UpdateHoneyCommand(id, name, price, amount);
         }
     }
 }

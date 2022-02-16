@@ -1,6 +1,7 @@
 package com.jaybee.honey.catalog.application.port;
 
 import com.jaybee.honey.catalog.domain.Honey;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 
@@ -49,6 +50,7 @@ public interface CatalogUseCase {
 
     @Value
     @Builder
+    @AllArgsConstructor
     class UpdateHoneyCommand {
 
         Long id;
