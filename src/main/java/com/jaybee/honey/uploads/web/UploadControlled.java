@@ -18,7 +18,7 @@ public class UploadControlled {
 
     private final UploadUseCase upload;
 
-    @GetMapping("{/id}")
+    @GetMapping("/{id}")
     public ResponseEntity<UploadResponse> getUpload(@PathVariable String id) {
         return upload.getById(id).map(file -> {
             UploadResponse response = new UploadResponse(
