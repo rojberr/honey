@@ -91,6 +91,12 @@ public class CatalogController {
         ));
     }
 
+    @DeleteMapping("/{id}/cover")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeHoneyCover(@PathVariable Long id) {
+        catalog.removeHoneyCover(id);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Void> addHoney(@Valid @RequestBody CatalogController.RestHoneyCommand command) {

@@ -37,6 +37,8 @@ public interface CatalogUseCase {
 
     UpdateHoneyResponse updateHoney(UpdateHoneyCommand command);
 
+    void removeHoneyCover(Long id);
+
     @Value
     class UpdateHoneyCoverCommand {
         Long id;

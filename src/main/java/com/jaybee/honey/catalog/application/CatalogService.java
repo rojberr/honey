@@ -111,7 +111,6 @@ class CatalogService implements CatalogUseCase {
 
     @Override
     public UpdateHoneyResponse updateHoney(UpdateHoneyCommand command) {
-
         return repository
                 .findById(command.getId())
                 .map(honey -> {
@@ -120,5 +119,17 @@ class CatalogService implements CatalogUseCase {
                     return UpdateHoneyResponse.SUCCESS;
                 })
                 .orElseGet(() -> new UpdateHoneyResponse(false, Collections.singletonList("Honey not found with id: " + command.getId())));
+    }
+
+    @Override
+    public void removeHoneyCover(Long id) {
+        repository.findById(id)
+                .ifPresent(honey -> {
+                    if (honey.getCoverId() != null) {
+                        upload.removeById(honey.getCoverId());
+                        honey.setCoverId(null);
+                        repository.save(honey);
+                    }
+                });
     }
 }
