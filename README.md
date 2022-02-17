@@ -8,6 +8,12 @@ Made by me, mostly for me. One day we may go live, cause my family owns a bee-ga
 
 ## Use
 
+This will be deployed with use of Heroku.
+
+For now you can download the APP and use it.
+
+The description of the API was documented and can be found here: https://rojberr.github.io/honey-swagger/
+
 ## TODO
 1) ...
 
