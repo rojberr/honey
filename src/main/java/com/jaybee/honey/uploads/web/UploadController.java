@@ -3,6 +3,10 @@ package com.jaybee.honey.uploads.web;
 import com.jaybee.honey.uploads.application.port.UploadUseCase;
 import lombok.AllArgsConstructor;
 import lombok.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +18,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/uploads")
 @AllArgsConstructor
-public class UploadControlled {
+public class UploadController {
 
     private final UploadUseCase upload;
 
@@ -28,6 +32,20 @@ public class UploadControlled {
                     file.getCreatedAt()
             );
             return ResponseEntity.ok(response);
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}/file")
+    public ResponseEntity<Resource> getUploadFile(@PathVariable String id) {
+        return upload.getById(id).map(file -> {
+            String contentDisposition = "attachment; filename = \"" + file.getFilename() + "\"";
+            byte[] bytes = file.getFile();
+            Resource resource = new ByteArrayResource(bytes);
+            return ResponseEntity
+                    .ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+                    .contentType(MediaType.parseMediaType(file.getContentType()))
+                    .body(resource);
         }).orElse(ResponseEntity.notFound().build());
     }
 
