@@ -12,7 +12,18 @@ This will be deployed with use of Heroku.
 
 For now you can download the APP and use it.
 
-The description of the API was documented and can be found here: https://rojberr.github.io/honey-swagger/
+## Postgres Database
+
+This web application uses Postgres Database.  
+
+To run it use:  
+1) cd docker (to get inside of /docker/ folder)
+2) docker-compose up -d (to run our database configured in docker-compose.yml)
+3) Connect your IDE to the database using ports and login stated in docker-compose.yml
+
+## Swagger - API Documentation
+
+The REST API was documented and can be found here: https://rojberr.github.io/honey-swagger/
 The documentation was created using SpringFox Boot Starter tool.
 
 Another dependency was added, and not Swagger Honey API documentation can be accessed after launching the
