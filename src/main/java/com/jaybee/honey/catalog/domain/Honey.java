@@ -26,7 +26,7 @@ public class Honey {
     private String name;
     private BigDecimal price;
     private Integer amount;
-    private String coverId;
+    private Long coverId;
 
     @CreatedDate
     private LocalDateTime createdAt;
