@@ -35,6 +35,7 @@ public class Order {
     @JoinColumn(name = "order_id")
     private List<OrderItem> items;
 
+    @ManyToOne(cascade = CascadeType.ALL)
     private Recipient recipient;
 
     @CreatedDate

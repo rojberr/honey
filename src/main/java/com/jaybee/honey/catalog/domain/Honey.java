@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -27,6 +28,10 @@ public class Honey {
     private BigDecimal price;
     private Integer amount;
     private Long coverId;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable
+    private Set<Manufacturer> manufacturers;
 
     @CreatedDate
     private LocalDateTime createdAt;
