@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Table;
+
+import javax.persistence.Embeddable;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Embeddable
 public class Recipient {
     String name;
     String phone;
