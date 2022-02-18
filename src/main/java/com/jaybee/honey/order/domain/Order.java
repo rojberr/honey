@@ -26,7 +26,7 @@ public class Order {
     @Builder.Default
     private OrderStatus status = OrderStatus.NEW;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id")
     private List<OrderItem> items;
 
