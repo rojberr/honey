@@ -1,8 +1,8 @@
 package com.jaybee.honey.order.application;
 
 import com.jaybee.honey.order.application.port.ManipulateOrderUseCase;
+import com.jaybee.honey.order.db.OrderJpaRepository;
 import com.jaybee.honey.order.domain.Order;
-import com.jaybee.honey.order.domain.OrderRepository;
 import com.jaybee.honey.order.domain.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 class ManipulateOrderService implements ManipulateOrderUseCase {
-    private final OrderRepository repository;
+    private final OrderJpaRepository repository;
 
     @Override
     public PlaceOrderResponse placeOrder(PlaceOrderCommand command) {

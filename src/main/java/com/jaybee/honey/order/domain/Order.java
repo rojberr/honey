@@ -27,6 +27,7 @@ public class Order {
     private OrderStatus status = OrderStatus.NEW;
 
     @OneToMany
+    @JoinColumn(name = "order_id")
     private List<OrderItem> items;
 
     private transient Recipient recipient;

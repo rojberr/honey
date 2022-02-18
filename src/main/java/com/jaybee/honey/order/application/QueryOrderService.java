@@ -3,9 +3,9 @@ package com.jaybee.honey.order.application;
 import com.jaybee.honey.catalog.db.HoneyJpaRepository;
 import com.jaybee.honey.catalog.domain.Honey;
 import com.jaybee.honey.order.application.port.QueryOrderUseCase;
+import com.jaybee.honey.order.db.OrderJpaRepository;
 import com.jaybee.honey.order.domain.Order;
 import com.jaybee.honey.order.domain.OrderItem;
-import com.jaybee.honey.order.domain.OrderRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 class QueryOrderService implements QueryOrderUseCase {
-    private final OrderRepository orderRepository;
+    private final OrderJpaRepository orderRepository;
     private final HoneyJpaRepository honeyJpaRepository;
 
     @Override
