@@ -117,23 +117,6 @@ public class CatalogController {
                 .path("/" + honey.getId().toString()).build().toUri();
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleException(MethodArgumentNotValidException exception) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        HttpStatus status = HttpStatus.BAD_REQUEST;
-        body.put("timestamp", new Date());
-        body.put("status", status.value());
-        // Get all errors
-        List<String> errors = exception
-                .getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(x -> x.getField() + " - " + x.getDefaultMessage())
-                .collect(Collectors.toList());
-        body.put("errors", errors);
-        return new ResponseEntity<>(body, status);
-    }
-
     @Data
     private static class RestHoneyCommand {
         @NotBlank

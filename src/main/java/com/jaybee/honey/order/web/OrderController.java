@@ -1,73 +1,110 @@
 package com.jaybee.honey.order.web;
 
-import com.jaybee.honey.order.application.port.PlaceOrderUseCase;
+import com.jaybee.honey.order.application.port.ManipulateOrderUseCase;
+import com.jaybee.honey.order.application.port.ManipulateOrderUseCase.PlaceOrderCommand;
 import com.jaybee.honey.order.application.port.QueryOrderUseCase;
-import com.jaybee.honey.order.domain.Order;
+import com.jaybee.honey.order.domain.OrderItem;
+import com.jaybee.honey.order.domain.OrderStatus;
+import com.jaybee.honey.order.domain.Recipient;
+import com.jaybee.honey.web.CreatedURI;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.Data;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.net.URI;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
-@Controller
-@RequestMapping("/orders")
+import static com.jaybee.honey.order.application.port.QueryOrderUseCase.RichOrder;
+import static org.springframework.http.HttpStatus.*;
+
+@RestController
 @AllArgsConstructor
-public class OrderController {
-
-    private final QueryOrderUseCase query;
-    private final PlaceOrderUseCase placeOrder;
+@RequestMapping("/orders")
+class OrderController {
+    private final ManipulateOrderUseCase manipulateOrder;
+    private final QueryOrderUseCase queryOrder;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<Order> getOrders() {
-        return query.findAll();
+    public List<RichOrder> getOrders() {
+        return queryOrder.findAll();
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Optional<Order> getById() {
-        return null;
+    public ResponseEntity<RichOrder> getOrderById(@PathVariable Long id) {
+        return queryOrder.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Void> addOrder() {
-        return null;
+    @ResponseStatus(CREATED)
+    public ResponseEntity<Object> createOrder(@RequestBody CreateOrderCommand command) {
+        return manipulateOrder
+                .placeOrder(command.toPlaceOrderCommand())
+                .handle(
+                        orderId -> ResponseEntity.created(orderUri(orderId)).build(),
+                        error -> ResponseEntity.badRequest().body(error)
+                );
     }
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public ResponseEntity<Void> addHoney(@Valid @RequestBody CatalogController.RestHoneyCommand command) {
-//        Honey honey = catalog.addHoney(command.toCreateCommand());
-//        URI uri = createdHoneyURI(honey);
-//        return ResponseEntity.created(uri).build();
-//    }
+
+    URI orderUri(Long orderId) {
+        return new CreatedURI("/" + orderId).uri();
+    }
 
     @PutMapping("/{id}/status")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void updateOrder() {
-        return;
+    @ResponseStatus(ACCEPTED)
+    public void updateOrderStatus(@PathVariable Long id, @RequestBody UpdateStatusCommand command) {
+        OrderStatus orderStatus = OrderStatus
+                .parseString(command.status)
+                .orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "Unknown status: " + command.status));
+        manipulateOrder.updateOrderStatus(id, orderStatus);
     }
-//    @PutMapping("/{id}")
-//    @ResponseStatus(HttpStatus.ACCEPTED)
-//    public void updateHoney(@PathVariable Long id,
-//                            @RequestBody CatalogController.RestHoneyCommand command) {
-//        CatalogUseCase.UpdateHoneyResponse response = catalog.updateHoney(command.toUpdateCommand(id));
-//        if (!response.isSuccess()) {
-//            String message = String.join(", ", response.getErrors());
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
-//        }
-//    }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void deleete() {
-        return;
+    @ResponseStatus(NO_CONTENT)
+    public void deleteOrder(@PathVariable Long id) {
+        manipulateOrder.deleteOrderById(id);
     }
-//    @DeleteMapping("/{id}/cover")
-//    @ResponseStatus(HttpStatus.NO_CONTENT)
-//    public void removeHoneyCover(@PathVariable Long id) {
-//        catalog.removeHoneyCover(id);
-//    }
+
+    @Data
+    static class CreateOrderCommand {
+        List<OrderItemCommand> items;
+        RecipientCommand recipient;
+
+        PlaceOrderCommand toPlaceOrderCommand() {
+            List<OrderItem> orderItems = items
+                    .stream()
+                    .map(item -> new OrderItem(item.honeyId, item.quantity))
+                    .collect(Collectors.toList());
+            return new PlaceOrderCommand(orderItems, recipient.toRecipient());
+        }
+    }
+
+    @Data
+    static class OrderItemCommand {
+        Long honeyId;
+        int quantity;
+    }
+
+    @Data
+    static class RecipientCommand {
+        String name;
+        String phone;
+        String street;
+        String city;
+        String zipCode;
+        String email;
+
+        Recipient toRecipient() {
+            return new Recipient(name, phone, street, city, zipCode, email);
+        }
+    }
+
+    @Data
+    static class UpdateStatusCommand {
+        String status;
+    }
 }

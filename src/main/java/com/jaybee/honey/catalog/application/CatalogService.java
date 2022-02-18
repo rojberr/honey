@@ -1,7 +1,7 @@
 package com.jaybee.honey.catalog.application;
 
 import com.jaybee.honey.catalog.application.port.CatalogUseCase;
-import com.jaybee.honey.catalog.domain.CatalogRepository;
+import com.jaybee.honey.catalog.db.HoneyJpaRepository;
 import com.jaybee.honey.catalog.domain.Honey;
 import com.jaybee.honey.uploads.application.port.UploadUseCase;
 import com.jaybee.honey.uploads.application.port.UploadUseCase.SaveUploadCommand;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 class CatalogService implements CatalogUseCase {
 
-    private final CatalogRepository repository;
+    private final HoneyJpaRepository repository;
     private final UploadUseCase upload;
 
 
@@ -92,8 +92,7 @@ class CatalogService implements CatalogUseCase {
 
     @Override
     public void removeById(Long id) {
-
-        repository.removeById(id);
+        repository.deleteById(id);
     }
 
     @Override

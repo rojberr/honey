@@ -1,15 +1,15 @@
 package com.jaybee.honey.order.application;
 
-import com.jaybee.honey.order.application.port.PlaceOrderUseCase;
+import com.jaybee.honey.order.application.port.ManipulateOrderUseCase;
 import com.jaybee.honey.order.domain.Order;
 import com.jaybee.honey.order.domain.OrderRepository;
+import com.jaybee.honey.order.domain.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class PlaceOrderService implements PlaceOrderUseCase {
-
+class ManipulateOrderService implements ManipulateOrderUseCase {
     private final OrderRepository repository;
 
     @Override
@@ -21,5 +21,19 @@ public class PlaceOrderService implements PlaceOrderUseCase {
                 .build();
         Order save = repository.save(order);
         return PlaceOrderResponse.success(save.getId());
+    }
+
+    @Override
+    public void deleteOrderById(Long id) {
+        repository.deleteById(id);
+    }
+
+    @Override
+    public void updateOrderStatus(Long id, OrderStatus status) {
+        repository.findById(id)
+                .ifPresent(order -> {
+                    order.setStatus(status);
+                    repository.save(order);
+                });
     }
 }

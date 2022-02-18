@@ -1,28 +1,36 @@
 package com.jaybee.honey.order.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static javax.persistence.GenerationType.AUTO;
+
 @Data
 @Builder
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "orders")
 public class Order {
 
+    @Id
+    @GeneratedValue(strategy = AUTO)
     private Long id;
 
     @Builder.Default
     private OrderStatus status = OrderStatus.NEW;
-    private Recipient recipient;
+
+    @OneToMany
     private List<OrderItem> items;
+
+    private transient Recipient recipient;
+
     private LocalDateTime createdAt;
 
-    public BigDecimal totalPrice() {
-
-        return items.stream()
-                .map(item -> item.getHoney().getPrice().multiply(new BigDecimal(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
 }

@@ -1,12 +1,16 @@
 package com.jaybee.honey.order.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Table;
 
-@Value
+@Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Recipient {
-
     String name;
     String phone;
     String street;
