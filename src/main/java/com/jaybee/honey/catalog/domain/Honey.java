@@ -1,5 +1,6 @@
 package com.jaybee.honey.catalog.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -15,10 +16,10 @@ import java.util.Set;
 
 @Getter
 @Setter
-@ToString
 @RequiredArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@ToString(exclude = "manufacturers")
 public class Honey {
 
     @Id
@@ -31,6 +32,7 @@ public class Honey {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable
+    @JsonIgnoreProperties("honeys")
     private Set<Manufacturer> manufacturers;
 
     @CreatedDate

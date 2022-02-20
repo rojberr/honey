@@ -129,12 +129,12 @@ public class CatalogController {
         private Integer amount;
 
         CreateHoneyCommand toCreateCommand() {
-            return new CreateHoneyCommand(name, price, amount);
+            return new CreateHoneyCommand(name, Set.of() ,price, amount);
         }
 
 
         UpdateHoneyCommand toUpdateCommand(Long id) {
-            return new UpdateHoneyCommand(id, name, price, amount);
+            return new UpdateHoneyCommand(id, name, Set.of(), price, amount);
         }
     }
 }

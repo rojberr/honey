@@ -2,70 +2,64 @@ package com.jaybee.honey;
 
 import com.jaybee.honey.catalog.application.port.CatalogUseCase;
 import com.jaybee.honey.catalog.application.port.CatalogUseCase.CreateHoneyCommand;
-import com.jaybee.honey.catalog.application.port.CatalogUseCase.UpdateHoneyCommand;
-import com.jaybee.honey.catalog.application.port.CatalogUseCase.UpdateHoneyResponse;
+import com.jaybee.honey.catalog.db.ManufacturerJpaRepository;
 import com.jaybee.honey.catalog.domain.Honey;
+import com.jaybee.honey.catalog.domain.Manufacturer;
 import com.jaybee.honey.order.application.port.ManipulateOrderUseCase;
 import com.jaybee.honey.order.application.port.ManipulateOrderUseCase.PlaceOrderCommand;
 import com.jaybee.honey.order.application.port.ManipulateOrderUseCase.PlaceOrderResponse;
 import com.jaybee.honey.order.application.port.QueryOrderUseCase;
 import com.jaybee.honey.order.domain.OrderItem;
 import com.jaybee.honey.order.domain.Recipient;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 @Component
+@AllArgsConstructor
 class ApplicationStartup implements CommandLineRunner {
 
     private final CatalogUseCase catalog;
     private final ManipulateOrderUseCase manipulateOrderUseCase;
     private final QueryOrderUseCase queryOrder;
-    private final String query;
-    private final Long limit;
-
-    public ApplicationStartup(
-
-            CatalogUseCase catalog,
-            ManipulateOrderUseCase placeOrder,
-            QueryOrderUseCase queryOrder,
-            @Value("${honey.catalog.query}") String query,
-            @Value("${honey.catalog.limit}") Long limit
-    ) {
-        this.catalog = catalog;
-        this.manipulateOrderUseCase = placeOrder;
-        this.queryOrder = queryOrder;
-        this.query = query;
-        this.limit = limit;
-    }
+    private final ManufacturerJpaRepository manufacturerRepository;
 
     @Override
     public void run(String... args) {
         initData();
-        searchCatalog();
         placeOrder();
     }
 
     private void initData() {
-        catalog.addHoney(new CreateHoneyCommand("Biggest jar", new BigDecimal("100.00"), 100));
-        catalog.addHoney(new CreateHoneyCommand("Big jar", new BigDecimal("75.00"), 75));
-        catalog.addHoney(new CreateHoneyCommand("Medium jar", BigDecimal.valueOf(50), 50));
-        catalog.addHoney(new CreateHoneyCommand("Small jar", new BigDecimal(25), 25));
-    }
+        Manufacturer honeyFirma = new Manufacturer("Honey", "Firma");
+        Manufacturer firmaHoney = new Manufacturer("Firma", "Honey");
+        manufacturerRepository.save(honeyFirma);
+        manufacturerRepository.save(firmaHoney);
 
-    private void searchCatalog() {
-        findByName();
-        findAndUpdate();
-        findByName();
+        CreateHoneyCommand myJar = new CreateHoneyCommand("My jar",
+                Set.of(honeyFirma.getId()),
+                new BigDecimal(15550),
+                99);
+        CreateHoneyCommand hisJar = new CreateHoneyCommand("His jar",
+                Set.of(firmaHoney.getId(), honeyFirma.getId()),
+                new BigDecimal(12345),
+                22);
+//        catalog.addHoney(new CreateHoneyCommand("Biggest jar", ,new BigDecimal("100.00"), 100));
+//        catalog.addHoney(new CreateHoneyCommand("Big jar", ,new BigDecimal("75.00"), 75));
+//        catalog.addHoney(new CreateHoneyCommand("Medium jar", ,BigDecimal.valueOf(50), 50));
+//        catalog.addHoney(new CreateHoneyCommand("Small jar", ,new BigDecimal(25), 25));
+//        catalog.addHoney(new CreateHoneyCommand("Beauty honey creme", ,new BigDecimal(10), 10));
+        catalog.addHoney(myJar);
+        catalog.addHoney(hisJar);
     }
 
     private void placeOrder() {
-        Honey big_jar = catalog.findOneByName("Big jar")
+        Honey big_jar = catalog.findOneByName("My jar")
                 .orElseThrow(() -> new IllegalStateException("Can't find the honey product"));
-        Honey small_jar = catalog.findOneByName("Small jar")
+        Honey small_jar = catalog.findOneByName("His jar")
                 .orElseThrow(() -> new IllegalStateException("Can't find the honey product"));
 
         // create recipient
@@ -93,23 +87,8 @@ class ApplicationStartup implements CommandLineRunner {
                 error -> "Failed to created order: " + error
         );
         System.out.println(result);
-    }
 
-    private void findByName() {
-        List<Honey> honeyList = catalog.findByName(query);
-        honeyList.forEach(System.out::println);
-    }
-
-    private void findAndUpdate() {
-        System.out.println("Updating Honey...");
-        catalog.findOneByNameAndAmount("jar", 25)
-                .ifPresent(honey -> {
-                    UpdateHoneyCommand command = UpdateHoneyCommand.builder()
-                            .id(honey.getId())
-                            .name("Small jar")
-                            .build();
-                    UpdateHoneyResponse response = catalog.updateHoney(command);
-                    System.out.println("Updating honey result: " + response.isSuccess());
-                });
+        queryOrder.findAll()
+                .forEach(order -> System.out.println("GOT ORDER WITH TOTAL PRICE: " + order.totalPrice() + " DETAILS: " + order));
     }
 }

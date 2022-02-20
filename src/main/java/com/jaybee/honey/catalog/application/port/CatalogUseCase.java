@@ -1,6 +1,7 @@
 package com.jaybee.honey.catalog.application.port;
 
 import com.jaybee.honey.catalog.domain.Honey;
+import com.jaybee.honey.catalog.domain.Manufacturer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
@@ -8,6 +9,7 @@ import lombok.Value;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.util.Collections.emptyList;
 
@@ -49,14 +51,10 @@ public interface CatalogUseCase {
 
     @Value
     class CreateHoneyCommand {
-
         String name;
+        Set<Long> manufacturers;
         BigDecimal price;
         Integer amount;
-
-        public Honey toHoney() {
-            return new Honey(name, price, amount);
-        }
     }
 
     @Value
@@ -66,6 +64,7 @@ public interface CatalogUseCase {
 
         Long id;
         String name;
+        Set<Manufacturer> manufacturers;
         BigDecimal price;
         Integer amount;
 

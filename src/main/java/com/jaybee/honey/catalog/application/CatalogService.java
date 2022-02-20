@@ -2,7 +2,9 @@ package com.jaybee.honey.catalog.application;
 
 import com.jaybee.honey.catalog.application.port.CatalogUseCase;
 import com.jaybee.honey.catalog.db.HoneyJpaRepository;
+import com.jaybee.honey.catalog.db.ManufacturerJpaRepository;
 import com.jaybee.honey.catalog.domain.Honey;
+import com.jaybee.honey.catalog.domain.Manufacturer;
 import com.jaybee.honey.uploads.application.port.UploadUseCase;
 import com.jaybee.honey.uploads.application.port.UploadUseCase.SaveUploadCommand;
 import com.jaybee.honey.uploads.domain.Upload;
@@ -12,12 +14,14 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 class CatalogService implements CatalogUseCase {
 
+    private final ManufacturerJpaRepository manufacturerRepository;
     private final HoneyJpaRepository repository;
     private final UploadUseCase upload;
 
@@ -86,8 +90,19 @@ class CatalogService implements CatalogUseCase {
 
     @Override
     public Honey addHoney(CreateHoneyCommand command) {
-        Honey honey = command.toHoney();
+        Honey honey = toHoney(command);
         return repository.save(honey);
+    }
+
+    private Honey toHoney(CreateHoneyCommand command) {
+        Honey honey = new Honey(command.getName(), command.getPrice(), command.getAmount());
+        Set<Manufacturer> manufacturerSet = command.getManufacturers().stream()
+                .map(manufacturerId -> manufacturerRepository
+                        .findById(manufacturerId)
+                        .orElseThrow(() -> new IllegalArgumentException("Unable to find manufacturer with id: " + manufacturerId))
+                ).collect(Collectors.toSet());
+        honey.setManufacturers(manufacturerSet);
+        return honey;
     }
 
     @Override
