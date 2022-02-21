@@ -57,8 +57,7 @@ class CatalogService implements CatalogUseCase {
     @Override
     public List<Honey> findByManufacturers(String name) {
         return repository
-                .findByManufacturers_firstNameContainsIgnoreCaseOrManufacturers_lastNameContainsIgnoreCase(name,
-                        name);
+                .findByManufacturer(name);
     }
 
     @Override
