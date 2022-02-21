@@ -64,22 +64,9 @@ public interface CatalogUseCase {
 
         Long id;
         String name;
-        Set<Manufacturer> manufacturers;
+        Set<Long> manufacturers;
         BigDecimal price;
         Integer amount;
-
-        public Honey updateFields(Honey honey) {
-            if (name != null) {
-                honey.setName(name);
-            }
-            if (price != null) {
-                honey.setPrice(price);
-            }
-            if (amount != null) {
-                honey.setAmount(amount);
-            }
-            return honey;
-        }
     }
 
     @Value

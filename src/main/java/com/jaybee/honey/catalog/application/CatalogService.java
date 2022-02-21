@@ -96,12 +96,33 @@ class CatalogService implements CatalogUseCase {
 
     private Honey toHoney(CreateHoneyCommand command) {
         Honey honey = new Honey(command.getName(), command.getPrice(), command.getAmount());
-        Set<Manufacturer> manufacturerSet = command.getManufacturers().stream()
+        Set<Manufacturer> manufacturerSet = fetchManufacturersByIds(command.getManufacturers());
+        honey.setManufacturers(manufacturerSet);
+        return honey;
+    }
+
+    private Set<Manufacturer> fetchManufacturersByIds(Set<Long> manufacturers) {
+        return manufacturers
+                .stream()
                 .map(manufacturerId -> manufacturerRepository
                         .findById(manufacturerId)
                         .orElseThrow(() -> new IllegalArgumentException("Unable to find manufacturer with id: " + manufacturerId))
                 ).collect(Collectors.toSet());
-        honey.setManufacturers(manufacturerSet);
+    }
+
+    private Honey updateFields(UpdateHoneyCommand command, Honey honey) {
+        if (command.getName() != null) {
+            honey.setName(command.getName());
+        }
+        if (command.getManufacturers() != null && !command.getManufacturers().isEmpty()) {
+            honey.setManufacturers(fetchManufacturersByIds(command.getManufacturers()));
+        }
+        if (command.getAmount() != null) {
+            honey.setAmount(command.getAmount());
+        }
+        if (command.getPrice() != null) {
+            honey.setPrice(command.getPrice());
+        }
         return honey;
     }
 
@@ -128,7 +149,7 @@ class CatalogService implements CatalogUseCase {
         return repository
                 .findById(command.getId())
                 .map(honey -> {
-                    Honey updatedHoney = command.updateFields(honey);
+                    Honey updatedHoney = updateFields(command, honey);
                     repository.save(updatedHoney);
                     return UpdateHoneyResponse.SUCCESS;
                 })
