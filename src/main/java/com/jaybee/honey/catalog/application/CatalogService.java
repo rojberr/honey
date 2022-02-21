@@ -38,11 +38,7 @@ class CatalogService implements CatalogUseCase {
 
     @Override
     public List<Honey> findByName(String productName) {
-        return repository.findAll()
-                .stream()
-                .filter(honey -> honey.getName().toLowerCase()
-                        .contains(productName.toLowerCase()))
-                .collect(Collectors.toList());
+        return repository.findByNameStartsWithIgnoreCase(productName);
     }
 
     @Override

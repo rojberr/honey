@@ -11,7 +11,7 @@ public interface HoneyJpaRepository extends JpaRepository<Honey, Long> {
 
     List<Honey> findByManufacturers_firstNameContainsIgnoreCaseOrManufacturers_lastNameContainsIgnoreCase(String firstName, String lastName);
 
-    List<Honey> findByNameStartsWithIgnoreCase(String title);
+    List<Honey> findByNameStartsWithIgnoreCase(String productName);
 
     @Query(
             " SELECT b FROM Honey b JOIN b.manufacturers a "
