@@ -1,7 +1,6 @@
 package com.jaybee.honey.catalog.application.port;
 
 import com.jaybee.honey.catalog.domain.Honey;
-import com.jaybee.honey.catalog.domain.Manufacturer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
@@ -22,6 +21,8 @@ public interface CatalogUseCase {
     public List<Honey> findByName(String productName);
 
     public Optional<Honey> findOneByName(String productName);
+
+    List<Honey> findByManufacturer(String manufacturer);
 
     public Optional<Honey> findOneByPrice(Long price);
 

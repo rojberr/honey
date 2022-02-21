@@ -57,9 +57,9 @@ class ApplicationStartup implements CommandLineRunner {
     }
 
     private void placeOrder() {
-        Honey big_jar = catalog.findOneByName("My jar")
+        Honey big_jar = catalog.findOneByName("His jar")
                 .orElseThrow(() -> new IllegalStateException("Can't find the honey product"));
-        Honey small_jar = catalog.findOneByName("His jar")
+        Honey small_jar = catalog.findOneByName("My jar")
                 .orElseThrow(() -> new IllegalStateException("Can't find the honey product"));
 
         // create recipient

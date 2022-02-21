@@ -43,6 +43,7 @@ public class CatalogController {
     public List<Honey> getAll(
             @RequestParam Optional<String> name,
             @RequestParam Optional<Integer> amount,
+            @RequestParam Optional<String> manufacturerName,
             @RequestParam(defaultValue = "false") boolean debug,
             @RequestParam(defaultValue = "10") int limit
     ) {
@@ -52,6 +53,10 @@ public class CatalogController {
             return catalog.findByName(name.get());
         } else if (amount.isPresent()) {
             return catalog.findOneByAmount(amount.get())
+                    .stream()
+                    .collect(Collectors.toList());
+        } else if (manufacturerName.isPresent()) {
+            return catalog.findByManufacturer(manufacturerName.get())
                     .stream()
                     .collect(Collectors.toList());
         }
