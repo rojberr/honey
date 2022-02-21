@@ -22,7 +22,7 @@ public interface CatalogUseCase {
 
     public Optional<Honey> findOneByName(String productName);
 
-    List<Honey> findByManufacturer(String manufacturer);
+    List<Honey> findByManufacturers(String name);
 
     public Optional<Honey> findOneByPrice(Long price);
 

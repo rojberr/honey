@@ -11,7 +11,10 @@ import com.jaybee.honey.uploads.domain.Upload;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,8 +55,10 @@ class CatalogService implements CatalogUseCase {
     }
 
     @Override
-    public List<Honey> findByManufacturer(String firstName) {
-        return repository.findByManufacturers_firstNameContainsIgnoreCase(firstName);
+    public List<Honey> findByManufacturers(String name) {
+        return repository
+                .findByManufacturers_firstNameContainsIgnoreCaseOrManufacturers_lastNameContainsIgnoreCase(name,
+                        name);
     }
 
     @Override

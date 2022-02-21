@@ -56,7 +56,7 @@ public class CatalogController {
                     .stream()
                     .collect(Collectors.toList());
         } else if (manufacturerName.isPresent()) {
-            return catalog.findByManufacturer(manufacturerName.get())
+            return catalog.findByManufacturers(manufacturerName.get())
                     .stream()
                     .collect(Collectors.toList());
         }

@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface HoneyJpaRepository extends JpaRepository<Honey, Long> {
 
-    List<Honey> findByManufacturers_firstNameContainsIgnoreCase(String firstName);
+    List<Honey> findByManufacturers_firstNameContainsIgnoreCaseOrManufacturers_lastNameContainsIgnoreCase(String firstName, String lastName);
 }
