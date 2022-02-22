@@ -1,31 +1,27 @@
 package com.jaybee.honey.order.domain;
 
-import lombok.Data;
+import com.jaybee.honey.jpa.BaseEntity;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
 import java.time.LocalDateTime;
 
-import static javax.persistence.GenerationType.AUTO;
-
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class OrderItem {
-    @Id
-    @GeneratedValue(strategy = AUTO)
-    private Long id;
+public class OrderItem extends BaseEntity {
 
     private Long honeyId;
-
     int quantity;
 
     @CreatedDate
@@ -33,7 +29,6 @@ public class OrderItem {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
-
 
     public OrderItem(Long honeyId, int quantity) {
         this.honeyId = honeyId;

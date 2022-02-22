@@ -1,6 +1,7 @@
 package com.jaybee.honey.catalog.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jaybee.honey.jpa.BaseEntity;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -21,11 +22,8 @@ import java.util.Set;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @ToString(exclude = "manufacturers")
-public class Honey {
+public class Honey extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
     private String name;
     private BigDecimal price;
     private Integer amount;

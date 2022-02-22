@@ -1,25 +1,23 @@
 package com.jaybee.honey.uploads.domain;
 
-import lombok.Data;
+import com.jaybee.honey.jpa.BaseEntity;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Upload {
+public class Upload extends BaseEntity {
 
-    @Id
-    @GeneratedValue
-    private Long id;
     private byte[] file;
     private String contentType;
     private String filename;
