@@ -25,7 +25,7 @@ public class Manufacturer extends BaseEntity {
     private String firstName;
     private String lastName;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "manufacturers", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "manufacturers", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonIgnoreProperties("manufacturers")
     private Set<Honey> honeys = new HashSet<>();
 

@@ -11,6 +11,7 @@ import com.jaybee.honey.uploads.domain.Upload;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -88,6 +89,7 @@ class CatalogService implements CatalogUseCase {
     }
 
     @Override
+    @Transactional
     public Honey addHoney(CreateHoneyCommand command) {
         Honey honey = toHoney(command);
         return repository.save(honey);

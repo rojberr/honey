@@ -29,7 +29,7 @@ public class Honey extends BaseEntity {
     private Integer amount;
     private Long coverId;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable
     @JsonIgnoreProperties("honeys")
     private Set<Manufacturer> manufacturers = new HashSet<>();
