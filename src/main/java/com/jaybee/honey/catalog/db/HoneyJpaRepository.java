@@ -10,6 +10,9 @@ import java.util.Optional;
 
 public interface HoneyJpaRepository extends JpaRepository<Honey, Long> {
 
+    @Query(" SELECT b FROM Honey b JOIN FETCH b.manufacturers ")
+    List<Honey> findAllEager();
+
     List<Honey> findByManufacturers_firstNameContainsIgnoreCaseOrManufacturers_lastNameContainsIgnoreCase(String firstName, String lastName);
 
     List<Honey> findByNameStartsWithIgnoreCase(String productName);

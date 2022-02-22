@@ -28,7 +28,7 @@ class CatalogService implements CatalogUseCase {
 
     @Override
     public List<Honey> findAll() {
-        return repository.findAll();
+        return repository.findAllEager();
     }
 
     @Override
@@ -151,12 +151,13 @@ class CatalogService implements CatalogUseCase {
     }
 
     @Override
+    @Transactional
     public UpdateHoneyResponse updateHoney(UpdateHoneyCommand command) {
         return repository
                 .findById(command.getId())
                 .map(honey -> {
                     Honey updatedHoney = updateFields(command, honey);
-                    repository.save(updatedHoney);
+//                    repository.save(updatedHoney); Hibernate changes the entity because of @Transactional
                     return UpdateHoneyResponse.SUCCESS;
                 })
                 .orElseGet(() -> new UpdateHoneyResponse(false, Collections.singletonList("Honey not found with id: " + command.getId())));
