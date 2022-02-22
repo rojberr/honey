@@ -25,7 +25,6 @@ class CatalogService implements CatalogUseCase {
     private final HoneyJpaRepository repository;
     private final UploadUseCase upload;
 
-
     @Override
     public List<Honey> findAll() {
         return repository.findAll();
@@ -97,8 +96,13 @@ class CatalogService implements CatalogUseCase {
     private Honey toHoney(CreateHoneyCommand command) {
         Honey honey = new Honey(command.getName(), command.getPrice(), command.getAmount());
         Set<Manufacturer> manufacturerSet = fetchManufacturersByIds(command.getManufacturers());
-        honey.setManufacturers(manufacturerSet);
+        updateHoney(honey, manufacturerSet);
         return honey;
+    }
+
+    private void updateHoney(Honey honey, Set<Manufacturer> manufacturerSet) {
+        honey.removeManufacturers();
+        manufacturerSet.forEach(honey::addManufacturer);
     }
 
     private Set<Manufacturer> fetchManufacturersByIds(Set<Long> manufacturers) {
@@ -115,7 +119,7 @@ class CatalogService implements CatalogUseCase {
             honey.setName(command.getName());
         }
         if (command.getManufacturers() != null && !command.getManufacturers().isEmpty()) {
-            honey.setManufacturers(fetchManufacturersByIds(command.getManufacturers()));
+            updateHoney(honey, fetchManufacturersByIds(command.getManufacturers()));
         }
         if (command.getAmount() != null) {
             honey.setAmount(command.getAmount());

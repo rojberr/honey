@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -26,7 +27,7 @@ public class Manufacturer {
 
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "manufacturers")
     @JsonIgnoreProperties("manufacturers")
-    private Set<Honey> honeys;
+    private Set<Honey> honeys = new HashSet<>();
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -34,5 +35,15 @@ public class Manufacturer {
     public Manufacturer(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
+    }
+
+    public void addHoney(Honey honey) {
+        honeys.add(honey);
+        honey.getManufacturers().add(this);
+    }
+
+    public void removeHoney(Honey honey) {
+        honeys.remove(honey);
+        honey.getManufacturers().remove(this);
     }
 }

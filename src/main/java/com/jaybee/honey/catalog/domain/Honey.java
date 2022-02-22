@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -33,7 +34,7 @@ public class Honey {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable
     @JsonIgnoreProperties("honeys")
-    private Set<Manufacturer> manufacturers;
+    private Set<Manufacturer> manufacturers = new HashSet<>();
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -46,5 +47,21 @@ public class Honey {
         this.name = productName;
         this.price = price;
         this.amount = amount;
+    }
+
+    public void addManufacturer(Manufacturer manufacturer) {
+        manufacturers.add(manufacturer);
+        manufacturer.getHoneys().add(this);
+    }
+
+    public void removeManufacturer(Manufacturer manufacturer) {
+        manufacturers.remove(manufacturer);
+        manufacturer.getHoneys().remove(this);
+    }
+
+    public void removeManufacturers() {
+        Honey self = this;
+        manufacturers.forEach(manufacturer -> manufacturer.getHoneys().remove(self));
+        manufacturers.clear();
     }
 }
