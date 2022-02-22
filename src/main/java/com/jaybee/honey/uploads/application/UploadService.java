@@ -11,6 +11,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class UploadService implements UploadUseCase {
+
     private final UploadJpaRepository repository;
 
     @Override

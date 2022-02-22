@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 class QueryOrderService implements QueryOrderUseCase {
+
     private final OrderJpaRepository orderRepository;
     private final HoneyJpaRepository honeyJpaRepository;
 

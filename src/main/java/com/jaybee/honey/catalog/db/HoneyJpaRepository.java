@@ -6,12 +6,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface HoneyJpaRepository extends JpaRepository<Honey, Long> {
 
     List<Honey> findByManufacturers_firstNameContainsIgnoreCaseOrManufacturers_lastNameContainsIgnoreCase(String firstName, String lastName);
 
     List<Honey> findByNameStartsWithIgnoreCase(String productName);
+
+    Optional<Honey> findDistinctFirstByNameStartsWithIgnoreCase(String productName);
 
     @Query(
             " SELECT b FROM Honey b JOIN b.manufacturers a "

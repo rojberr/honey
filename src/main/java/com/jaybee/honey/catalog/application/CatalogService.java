@@ -43,11 +43,7 @@ class CatalogService implements CatalogUseCase {
 
     @Override
     public Optional<Honey> findOneByName(String productName) {
-        return repository.findAll()
-                .stream()
-                .filter(honey -> honey.getName().toLowerCase()
-                        .contains(productName.toLowerCase()))
-                .findFirst();
+        return repository.findDistinctFirstByNameStartsWithIgnoreCase(productName);
     }
 
     @Override
