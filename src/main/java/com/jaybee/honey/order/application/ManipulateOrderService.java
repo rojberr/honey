@@ -4,9 +4,11 @@ import com.jaybee.honey.catalog.db.HoneyJpaRepository;
 import com.jaybee.honey.catalog.domain.Honey;
 import com.jaybee.honey.order.application.port.ManipulateOrderUseCase;
 import com.jaybee.honey.order.db.OrderJpaRepository;
+import com.jaybee.honey.order.db.RecipientJpaRepository;
 import com.jaybee.honey.order.domain.Order;
 import com.jaybee.honey.order.domain.OrderItem;
 import com.jaybee.honey.order.domain.OrderStatus;
+import com.jaybee.honey.order.domain.Recipient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,7 @@ class ManipulateOrderService implements ManipulateOrderUseCase {
 
     private final OrderJpaRepository repository;
     private final HoneyJpaRepository honeyJpaRepository;
+    private final RecipientJpaRepository recipientJpaRepository;
 
     @Override
     @Transactional
@@ -31,12 +34,19 @@ class ManipulateOrderService implements ManipulateOrderUseCase {
                 .collect(Collectors.toSet());
         Order order = Order
                 .builder()
-                .recipient(command.getRecipient())
+                .recipient(getOrCreateRecipient(command.getRecipient()))
                 .items(items)
                 .build();
         Order save = repository.save(order);
         honeyJpaRepository.saveAll(updateHoneys(items));
         return PlaceOrderResponse.success(save.getId());
+    }
+
+    private Recipient getOrCreateRecipient(Recipient recipient) {
+        recipientJpaRepository.findByEmailIgnoreCase(recipient
+                .getEmail())
+                .orElse(recipient);
+        return recipient;
     }
 
     private Set<Honey> updateHoneys(Set<OrderItem> items) {

@@ -44,11 +44,11 @@ public class AdminController {
         CatalogUseCase.CreateHoneyCommand myJar = new CatalogUseCase.CreateHoneyCommand("My jar",
                 Set.of(honeyFirma.getId()),
                 new BigDecimal(15550),
-                99, 5L);
+                99, 99L);
         CatalogUseCase.CreateHoneyCommand hisJar = new CatalogUseCase.CreateHoneyCommand("His jar",
                 Set.of(firmaHoney.getId(), honeyFirma.getId()),
                 new BigDecimal(12345),
-                22, 2L);
+                22, 99L);
         catalog.addHoney(myJar);
         catalog.addHoney(hisJar);
     }
