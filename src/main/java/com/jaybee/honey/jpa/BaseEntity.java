@@ -17,7 +17,6 @@ import static javax.persistence.GenerationType.AUTO;
 @Setter
 @EqualsAndHashCode(of = "uuid")
 abstract public class BaseEntity {
-
     @Id
     @GeneratedValue(strategy = AUTO)
     private Long id;

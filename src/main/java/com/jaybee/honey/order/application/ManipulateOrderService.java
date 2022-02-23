@@ -52,7 +52,7 @@ class ManipulateOrderService implements ManipulateOrderUseCase {
         Honey honey = honeyJpaRepository.getById(command.getHoneyId());
         int quantity = command.getQuantity();
         Long available = honey.getAvailable();
-        if (quantity >= available) {
+        if (quantity <= available) {
             return new OrderItem(honey, command.getQuantity());
         }
         throw new IllegalArgumentException("Too many products with id " + honey.getId()
