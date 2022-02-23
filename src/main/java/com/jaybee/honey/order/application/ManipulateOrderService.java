@@ -26,7 +26,6 @@ class ManipulateOrderService implements ManipulateOrderUseCase {
     private final RecipientJpaRepository recipientJpaRepository;
 
     @Override
-    @Transactional
     public PlaceOrderResponse placeOrder(PlaceOrderCommand command) {
         Set<OrderItem> items = command.getItems()
                 .stream()
@@ -43,10 +42,8 @@ class ManipulateOrderService implements ManipulateOrderUseCase {
     }
 
     private Recipient getOrCreateRecipient(Recipient recipient) {
-        recipientJpaRepository.findByEmailIgnoreCase(recipient
-                .getEmail())
+        return recipientJpaRepository.findByEmailIgnoreCase(recipient.getEmail())
                 .orElse(recipient);
-        return recipient;
     }
 
     private Set<Honey> updateHoneys(Set<OrderItem> items) {
@@ -71,7 +68,6 @@ class ManipulateOrderService implements ManipulateOrderUseCase {
     }
 
     @Override
-    @Transactional
     public void deleteOrderById(Long id) {
         repository.deleteById(id);
     }
