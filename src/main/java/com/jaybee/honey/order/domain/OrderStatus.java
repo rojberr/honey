@@ -10,7 +10,7 @@ public enum OrderStatus {
     NEW {
         @Override
         public OrderStatus updateStatus(OrderStatus status) {
-            switch (status) {
+            return switch (status) {
                 case PAID -> PAID;
                 case CANCELLED -> CANCELLED;
                 case ABANDONED -> ABANDONED;
@@ -28,6 +28,7 @@ public enum OrderStatus {
                 return SHIPPED;
             } else {
                 super.updateStatus(status);
+                return status;
             }
         };
     },

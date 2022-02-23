@@ -96,7 +96,7 @@ class CatalogService implements CatalogUseCase {
     }
 
     private Honey toHoney(CreateHoneyCommand command) {
-        Honey honey = new Honey(command.getName(), command.getPrice(), command.getAmount());
+        Honey honey = new Honey(command.getName(), command.getPrice(), command.getAmount(), command.getAvailable());
         Set<Manufacturer> manufacturerSet = fetchManufacturersByIds(command.getManufacturers());
         updateHoney(honey, manufacturerSet);
         return honey;

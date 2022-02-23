@@ -5,8 +5,9 @@ import com.jaybee.honey.catalog.db.ManufacturerJpaRepository;
 import com.jaybee.honey.catalog.domain.Honey;
 import com.jaybee.honey.catalog.domain.Manufacturer;
 import com.jaybee.honey.order.application.port.ManipulateOrderUseCase;
+import com.jaybee.honey.order.application.port.ManipulateOrderUseCase.OrderItemCommand;
+import com.jaybee.honey.order.application.port.ManipulateOrderUseCase.PlaceOrderCommand;
 import com.jaybee.honey.order.application.port.QueryOrderUseCase;
-import com.jaybee.honey.order.domain.OrderItem;
 import com.jaybee.honey.order.domain.Recipient;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,16 +44,11 @@ public class AdminController {
         CatalogUseCase.CreateHoneyCommand myJar = new CatalogUseCase.CreateHoneyCommand("My jar",
                 Set.of(honeyFirma.getId()),
                 new BigDecimal(15550),
-                99);
+                99, 5L);
         CatalogUseCase.CreateHoneyCommand hisJar = new CatalogUseCase.CreateHoneyCommand("His jar",
                 Set.of(firmaHoney.getId(), honeyFirma.getId()),
                 new BigDecimal(12345),
-                22);
-//        catalog.addHoney(new CreateHoneyCommand("Biggest jar", ,new BigDecimal("100.00"), 100));
-//        catalog.addHoney(new CreateHoneyCommand("Big jar", ,new BigDecimal("75.00"), 75));
-//        catalog.addHoney(new CreateHoneyCommand("Medium jar", ,BigDecimal.valueOf(50), 50));
-//        catalog.addHoney(new CreateHoneyCommand("Small jar", ,new BigDecimal(25), 25));
-//        catalog.addHoney(new CreateHoneyCommand("Beauty honey creme", ,new BigDecimal(10), 10));
+                22, 2L);
         catalog.addHoney(myJar);
         catalog.addHoney(hisJar);
     }
@@ -75,11 +71,11 @@ public class AdminController {
                 .build();
 
         // place order command
-        ManipulateOrderUseCase.PlaceOrderCommand command = ManipulateOrderUseCase.PlaceOrderCommand
+        PlaceOrderCommand command = PlaceOrderCommand
                 .builder()
                 .recipient(recipient)
-                .item(new OrderItem(big_jar.getId(), 5))
-                .item(new OrderItem(small_jar.getId(), 10))
+                .item(new OrderItemCommand(big_jar.getId(), 5))
+                .item(new OrderItemCommand(small_jar.getId(), 10))
                 .build();
 
         ManipulateOrderUseCase.PlaceOrderResponse response = manipulateOrderUseCase.placeOrder(command);

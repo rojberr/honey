@@ -56,6 +56,7 @@ public interface CatalogUseCase {
         Set<Long> manufacturers;
         BigDecimal price;
         Integer amount;
+        Long available;
     }
 
     @Value

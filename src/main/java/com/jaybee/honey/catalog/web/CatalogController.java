@@ -16,10 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -136,9 +133,12 @@ public class CatalogController {
         @NotNull
         @DecimalMin("0.00")
         private Integer amount;
+        @NotNull
+        @PositiveOrZero
+        private Long available;
 
         CreateHoneyCommand toCreateCommand() {
-            return new CreateHoneyCommand(name, manufacturers, price, amount);
+            return new CreateHoneyCommand(name, manufacturers, price, amount, available);
         }
 
 

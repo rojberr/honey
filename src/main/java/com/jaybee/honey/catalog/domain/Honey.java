@@ -28,6 +28,7 @@ public class Honey extends BaseEntity {
     private BigDecimal price;
     private Integer amount;
     private Long coverId;
+    private Long available;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable
@@ -40,11 +41,12 @@ public class Honey extends BaseEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public Honey(String productName, BigDecimal price, Integer amount) {
+    public Honey(String productName, BigDecimal price, Integer amount, Long available) {
 
         this.name = productName;
         this.price = price;
         this.amount = amount;
+        this.available = available;
     }
 
     public void addManufacturer(Manufacturer manufacturer) {

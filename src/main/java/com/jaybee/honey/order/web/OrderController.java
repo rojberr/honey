@@ -3,9 +3,7 @@ package com.jaybee.honey.order.web;
 import com.jaybee.honey.order.application.port.ManipulateOrderUseCase;
 import com.jaybee.honey.order.application.port.ManipulateOrderUseCase.PlaceOrderCommand;
 import com.jaybee.honey.order.application.port.QueryOrderUseCase;
-import com.jaybee.honey.order.domain.OrderItem;
 import com.jaybee.honey.order.domain.OrderStatus;
-import com.jaybee.honey.order.domain.Recipient;
 import com.jaybee.honey.web.CreatedURI;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +13,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.jaybee.honey.order.application.port.QueryOrderUseCase.RichOrder;
 import static org.springframework.http.HttpStatus.*;
@@ -41,9 +38,9 @@ class OrderController {
 
     @PostMapping
     @ResponseStatus(CREATED)
-    public ResponseEntity<Object> createOrder(@RequestBody CreateOrderCommand command) {
+    public ResponseEntity<Object> createOrder(@RequestBody PlaceOrderCommand command) {
         return manipulateOrder
-                .placeOrder(command.toPlaceOrderCommand())
+                .placeOrder(command)
                 .handle(
                         orderId -> ResponseEntity.created(orderUri(orderId)).build(),
                         error -> ResponseEntity.badRequest().body(error)
@@ -67,40 +64,6 @@ class OrderController {
     @ResponseStatus(NO_CONTENT)
     public void deleteOrder(@PathVariable Long id) {
         manipulateOrder.deleteOrderById(id);
-    }
-
-    @Data
-    static class CreateOrderCommand {
-        List<OrderItemCommand> items;
-        RecipientCommand recipient;
-
-        PlaceOrderCommand toPlaceOrderCommand() {
-            List<OrderItem> orderItems = items
-                    .stream()
-                    .map(item -> new OrderItem(item.honeyId, item.quantity))
-                    .collect(Collectors.toList());
-            return new PlaceOrderCommand(orderItems, recipient.toRecipient());
-        }
-    }
-
-    @Data
-    static class OrderItemCommand {
-        Long honeyId;
-        int quantity;
-    }
-
-    @Data
-    static class RecipientCommand {
-        String name;
-        String phone;
-        String street;
-        String city;
-        String zipCode;
-        String email;
-
-        Recipient toRecipient() {
-            return new Recipient(name, phone, street, city, zipCode, email);
-        }
     }
 
     @Data

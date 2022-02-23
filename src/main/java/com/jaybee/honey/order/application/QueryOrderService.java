@@ -36,24 +36,12 @@ class QueryOrderService implements QueryOrderUseCase {
     }
 
     private RichOrder toRichOrder(Order order) {
-        List<RichOrderItem> richItems = toRichItems(order.getItems());
         return new RichOrder(
                 order.getId(),
                 order.getStatus(),
-                richItems,
+                order.getItems(),
                 order.getRecipient(),
                 order.getCreatedAt()
         );
-    }
-
-    private List<RichOrderItem> toRichItems(List<OrderItem> items) {
-        return items.stream()
-                .map(item -> {
-                    Honey honey = honeyJpaRepository
-                            .findById(item.getHoneyId())
-                            .orElseThrow(() -> new IllegalStateException("Unable to find honey with ID: " + item.getHoneyId()));
-                    return new RichOrderItem(honey, item.getQuantity());
-                })
-                .collect(Collectors.toList());
     }
 }

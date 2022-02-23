@@ -1,7 +1,6 @@
 package com.jaybee.honey.order.application.port;
 
 import com.jaybee.honey.commons.Either;
-import com.jaybee.honey.order.domain.OrderItem;
 import com.jaybee.honey.order.domain.OrderStatus;
 import com.jaybee.honey.order.domain.Recipient;
 import lombok.AllArgsConstructor;
@@ -23,8 +22,14 @@ public interface ManipulateOrderUseCase {
     @AllArgsConstructor
     class PlaceOrderCommand {
         @Singular
-        List<OrderItem> items;
+        List<OrderItemCommand> items;
         Recipient recipient;
+    }
+
+    @Value
+    class OrderItemCommand {
+        Long honeyId;
+        int quantity;
     }
 
     class PlaceOrderResponse extends Either<String, Long> {

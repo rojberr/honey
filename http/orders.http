@@ -5,7 +5,7 @@ Content-Type: application/json
   "items": [
     {
       "honeyId": 3,
-      "quantity": 2,
+      "quantity": 2
     },
     {
       "bookId": 1,
@@ -14,7 +14,7 @@ Content-Type: application/json
   ],
   "recipient": {
     "name": "Max Mustermann",
-    "phone" "123456789",
+    "phone": "123456789",
     "street":"Unter den Linden",
     "city": "Berlin",
     "zipCode": "1234567",
@@ -23,7 +23,7 @@ Content-Type: application/json
 }
 
 ###
-GET PUT http://localhost:8080/orders/9/status
+PUT http://localhost:8080/orders/9/status
 
 ###
 
