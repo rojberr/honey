@@ -2,5 +2,22 @@ PUT http://localhost:8080/orders/5/status
 Content-Type: application/json
 
 {
-  "status": "CONFIRMED"
+  "items": [
+    {
+      "honeyId": 3,
+      "quantity": 2,
+    },
+    {
+      "bookId": 1,
+      "quantity": 1
+    }
+  ],
+  "recipient": {
+    "name": "Max Mustermann",
+    "phone" "123456789",
+    "street":"Unter den Linden",
+    "city": "Berlin",
+    "zipCode": "1234567",
+    "email": "max.mustermann@dmx.de"
+  }
 }

@@ -31,6 +31,23 @@ application and typing: http://localhost:8080/swagger-ui/index.html#/ in your br
 
 ![img.png](img.png)
 
+# ORDER FLOW
+
+To manage our shop orders we create order steps, which can be changed only in defined directions.
+The graph below illustrates the idea.
+
+![img_2.png](img_2.png)
+
+THis represents a small state maschine.
+- NEW - This represents a new order. It can be either cancelled, abandoned or paid (in a given period of time!).
+- PAID - It can be only shipped.
+- SHIPPED - from here the order is acknowledged as done.
+
+To cancel an order you can use a http REST point, created specially for that.
+To abandon the order a specified time amount needs to be exceeded.
+
+If the oder is cancelled or abandoned the reserved amount of Honey products are released and saved in the database.
+
 ## TODO
 1) ...
 
