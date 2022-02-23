@@ -21,3 +21,15 @@ Content-Type: application/json
     "email": "max.mustermann@dmx.de"
   }
 }
+
+###
+GET PUT http://localhost:8080/orders/9/status
+
+###
+
+PUT http://localhost:8080/orders/9/status
+Content-Type: application/json
+
+{
+  "status": "SHIPPED"
+}
