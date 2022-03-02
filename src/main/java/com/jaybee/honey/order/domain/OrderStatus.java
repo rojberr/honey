@@ -9,12 +9,12 @@ public enum OrderStatus {
 
     NEW {
         @Override
-        public OrderStatus updateStatus(OrderStatus status) {
+        public UpdateStatusResult updateStatus(OrderStatus status) {
             return switch (status) {
-                case PAID -> PAID;
-                case CANCELLED -> CANCELLED;
-                case ABANDONED -> ABANDONED;
-                case SHIPPED -> SHIPPED;
+                case PAID -> UpdateStatusResult.ok(PAID);
+                case CANCELLED -> UpdateStatusResult.revoked(CANCELLED);
+                case ABANDONED -> UpdateStatusResult.revoked(ABANDONED);
+                case SHIPPED -> UpdateStatusResult.ok(SHIPPED);
                 default -> super.updateStatus(status);
             };
         }
@@ -23,14 +23,15 @@ public enum OrderStatus {
     ABANDONED,
     PAID {
         @Override
-        public OrderStatus updateStatus(OrderStatus status) {
+        public UpdateStatusResult updateStatus(OrderStatus status) {
             if (status == SHIPPED) {
-                return SHIPPED;
+                return UpdateStatusResult.ok(SHIPPED);
             } else {
-                super.updateStatus(status);
-                return status;
+                return super.updateStatus(status);
             }
-        };
+        }
+
+        ;
     },
     SHIPPED;
 
@@ -40,7 +41,7 @@ public enum OrderStatus {
                 .findFirst();
     }
 
-    public OrderStatus updateStatus(OrderStatus status) {
+    public UpdateStatusResult updateStatus(OrderStatus status) {
         throw new IllegalArgumentException("Unable to mark " + this.name() + " order as " + status.name());
     }
 }

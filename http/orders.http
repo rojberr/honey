@@ -31,5 +31,5 @@ PUT http://localhost:8080/orders/9/status
 Content-Type: application/json
 
 {
-  "status": "SHIPPED"
+  "status": "CANCELLED"
 }

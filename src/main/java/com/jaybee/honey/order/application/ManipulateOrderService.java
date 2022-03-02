@@ -5,10 +5,7 @@ import com.jaybee.honey.catalog.domain.Honey;
 import com.jaybee.honey.order.application.port.ManipulateOrderUseCase;
 import com.jaybee.honey.order.db.OrderJpaRepository;
 import com.jaybee.honey.order.db.RecipientJpaRepository;
-import com.jaybee.honey.order.domain.Order;
-import com.jaybee.honey.order.domain.OrderItem;
-import com.jaybee.honey.order.domain.OrderStatus;
-import com.jaybee.honey.order.domain.Recipient;
+import com.jaybee.honey.order.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +34,7 @@ class ManipulateOrderService implements ManipulateOrderUseCase {
                 .items(items)
                 .build();
         Order save = repository.save(order);
-        honeyJpaRepository.saveAll(updateHoneys(items));
+        honeyJpaRepository.saveAll(reduceHoneys(items));
         return PlaceOrderResponse.success(save.getId());
     }
 
@@ -46,7 +43,7 @@ class ManipulateOrderService implements ManipulateOrderUseCase {
                 .orElse(recipient);
     }
 
-    private Set<Honey> updateHoneys(Set<OrderItem> items) {
+    private Set<Honey> reduceHoneys(Set<OrderItem> items) {
         return items.stream()
                 .map(item -> {
                     Honey honey = item.getHoney();
@@ -73,13 +70,24 @@ class ManipulateOrderService implements ManipulateOrderUseCase {
     }
 
     @Override
-    @Transactional
     public void updateOrderStatus(Long id, OrderStatus status) {
         repository.findById(id)
                 .ifPresent(order -> {
-                    order.updateStatus(status);
-//                    order.setStatus(status);
+                    UpdateStatusResult result = order.updateStatus(status);
+                    if (result.isRevoked()) {
+                        honeyJpaRepository.saveAll(revokeHoneys(order.getItems()));
+                    }
                     repository.save(order);
                 });
+    }
+
+    private Set<Honey> revokeHoneys(Set<OrderItem> items) {
+        return items
+                .stream()
+                .map(item -> {
+                    Honey honey = item.getHoney();
+                    honey.setAvailable(honey.getAvailable() + item.getQuantity());
+                    return honey;
+                }).collect(Collectors.toSet());
     }
 }
