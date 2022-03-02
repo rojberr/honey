@@ -7,6 +7,7 @@ import com.jaybee.honey.catalog.application.port.CatalogUseCase.UpdateHoneyRespo
 import com.jaybee.honey.catalog.domain.Honey;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 
 import static com.jaybee.honey.catalog.application.port.CatalogUseCase.CreateHoneyCommand;
 
+@Slf4j
 @RequestMapping(value = "/catalog")
 @RestController
 @AllArgsConstructor
@@ -87,7 +89,7 @@ public class CatalogController {
     @PutMapping(value = "/{id}/cover", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void addHoneyCover(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
-        System.out.println("Got file " + file.getOriginalFilename());
+        log.info("Got file " + file.getOriginalFilename());
         catalog.updateHoneyCover(new UpdateHoneyCoverCommand(
                 id,
                 file.getBytes(),

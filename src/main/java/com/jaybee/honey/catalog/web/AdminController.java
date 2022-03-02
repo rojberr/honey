@@ -10,6 +10,7 @@ import com.jaybee.honey.order.application.port.ManipulateOrderUseCase.PlaceOrder
 import com.jaybee.honey.order.application.port.QueryOrderUseCase;
 import com.jaybee.honey.order.domain.Recipient;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Set;
 
+@Slf4j
 @RestController
 @RequestMapping("/admin")
 @AllArgsConstructor
@@ -83,9 +85,9 @@ public class AdminController {
                 orderId -> "Created ORDER with id: " + orderId,
                 error -> "Failed to created order: " + error
         );
-        System.out.println(result);
+        log.info(result);
 
         queryOrder.findAll()
-                .forEach(order -> System.out.println("GOT ORDER WITH TOTAL PRICE: " + order.totalPrice() + " DETAILS: " + order));
+                .forEach(order -> log.info("GOT ORDER WITH TOTAL PRICE: " + order.totalPrice() + " DETAILS: " + order));
     }
 }

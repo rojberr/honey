@@ -4,6 +4,7 @@ import com.jaybee.honey.order.db.OrderJpaRepository;
 import com.jaybee.honey.order.domain.Order;
 import com.jaybee.honey.order.domain.OrderStatus;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 public class AbandonedOrdersJob {
@@ -26,7 +28,7 @@ public class AbandonedOrdersJob {
         Duration paymentPeriod = properties.getPaymentPeriod();
         LocalDateTime olderThan = LocalDateTime.now().minus(paymentPeriod);
         List<Order> orders = repository.findByStatusAndCreatedAtLessThanEqual(OrderStatus.NEW, olderThan);
-        System.out.print("Found orders to be abandoned: " + orders.size());
+        log.info("Found orders to be abandoned: " + orders.size());
         orders.forEach(order -> orderUseCase.updateOrderStatus(order.getId(), OrderStatus.ABANDONED));
     }
 }

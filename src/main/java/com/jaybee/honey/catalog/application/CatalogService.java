@@ -9,6 +9,7 @@ import com.jaybee.honey.uploads.application.port.UploadUseCase;
 import com.jaybee.honey.uploads.application.port.UploadUseCase.SaveUploadCommand;
 import com.jaybee.honey.uploads.domain.Upload;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 class CatalogService implements CatalogUseCase {
@@ -140,7 +142,7 @@ class CatalogService implements CatalogUseCase {
     @Override
     public void updateHoneyCover(UpdateHoneyCoverCommand command) {
         int length = command.getFile().length;
-        System.out.println("Received honey: " + command.getFilename()
+        log.info("Received honey: " + command.getFilename()
                 + " bytes: " + length);
         repository.findById(command.getId())
                 .ifPresent(honey -> {
