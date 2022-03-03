@@ -4,6 +4,8 @@ import com.jaybee.honey.catalog.application.port.CatalogInitializerUseCase;
 import com.jaybee.honey.catalog.application.port.CatalogUseCase;
 import com.jaybee.honey.catalog.db.ManufacturerJpaRepository;
 import com.jaybee.honey.catalog.domain.Honey;
+import com.jaybee.honey.catalog.domain.Manufacturer;
+import com.jaybee.honey.jpa.BaseEntity;
 import com.jaybee.honey.order.application.port.ManipulateOrderUseCase;
 import com.jaybee.honey.order.application.port.QueryOrderUseCase;
 import com.jaybee.honey.order.domain.Recipient;
@@ -14,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +25,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.jaybee.honey.catalog.application.port.CatalogUseCase.CreateHoneyCommand;
 
@@ -57,15 +62,28 @@ public class CatalogInitializerService implements CatalogInitializerUseCase {
 
     private void initHoney(CsvHoney csvHoney) {
         // parse authors
+        Set<Long> manufacturers = Arrays.stream(csvHoney.manufacturer.split(","))
+                .filter(StringUtils::isNotBlank)
+                .map(String::trim)
+                .map(this::getOrCreateManufacturer)
+                .map(BaseEntity::getId)
+                .collect(Collectors.toSet());
+
         CreateHoneyCommand command = new CreateHoneyCommand(
                 csvHoney.name,
-                Set.of(),
+                manufacturers,
                 csvHoney.price,
                 csvHoney.amount,
                 csvHoney.available
         );
         catalog.addHoney(command);
         // upload thumbnail
+    }
+
+    private Manufacturer getOrCreateManufacturer(String manufacturerName) {
+        return manufacturerRepository
+                .findByFirstNameIgnoreCase(manufacturerName)
+                .orElseGet(() -> manufacturerRepository.save(new Manufacturer(manufacturerName, manufacturerName)));
     }
 
     private void placeOrder() {
@@ -110,6 +128,8 @@ public class CatalogInitializerService implements CatalogInitializerUseCase {
     public static class CsvHoney {
         @CsvBindByName
         private String name;
+        @CsvBindByName
+        private String manufacturer;
         @CsvBindByName
         private BigDecimal price;
         @CsvBindByName
