@@ -24,6 +24,7 @@ import java.util.Set;
 @ToString(exclude = "manufacturers")
 public class Honey extends BaseEntity {
 
+    @Column(unique = true)
     private String name;
     private BigDecimal price;
     private Integer amount;
