@@ -36,7 +36,6 @@ public class CatalogController {
 
     private final CatalogUseCase catalog;
 
-
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<Honey> getAll(
