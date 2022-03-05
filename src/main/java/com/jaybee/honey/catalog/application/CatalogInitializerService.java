@@ -18,7 +18,10 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
 import java.io.BufferedReader;
@@ -30,6 +33,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.jaybee.honey.catalog.application.port.CatalogUseCase.CreateHoneyCommand;
+import static com.jaybee.honey.catalog.application.port.CatalogUseCase.UpdateHoneyCoverCommand;
 
 @Slf4j
 @Service
@@ -40,6 +44,7 @@ public class CatalogInitializerService implements CatalogInitializerUseCase {
     private final QueryOrderUseCase queryOrder;
     private final ManipulateOrderUseCase manipulateOrderUseCase;
     private final ManufacturerJpaRepository manufacturerRepository;
+    private final RestTemplate restTemplate;
 
     @Override
     @Transactional
@@ -76,8 +81,17 @@ public class CatalogInitializerService implements CatalogInitializerUseCase {
                 csvHoney.amount,
                 csvHoney.available
         );
-        catalog.addHoney(command);
-        // upload thumbnail
+        Honey honey = catalog.addHoney(command);
+        catalog.updateHoneyCover(updateHoneyCoverCommand(honey.getId(), csvHoney.thumbnail));
+    }
+
+    private UpdateHoneyCoverCommand updateHoneyCoverCommand(Long id, String thumbnailUrl) {
+        ResponseEntity<byte[]> response = restTemplate.exchange(thumbnailUrl,
+                HttpMethod.GET,
+                null,
+                byte[].class);
+        String contentType = response.getHeaders().getContentType().toString();
+        return new UpdateHoneyCoverCommand(id, response.getBody(), contentType, "cover");
     }
 
     private Manufacturer getOrCreateManufacturer(String manufacturerName) {
