@@ -14,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.net.URI;
 import java.util.List;
 
-import static com.jaybee.honey.order.application.port.QueryOrderUseCase.RichOrder;
+import com.jaybee.honey.order.application.RichOrder;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
