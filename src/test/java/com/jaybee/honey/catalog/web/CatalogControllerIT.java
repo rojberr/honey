@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,9 +17,11 @@ import java.util.Set;
 
 import static com.jaybee.honey.catalog.application.port.CatalogUseCase.CreateHoneyCommand;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 class CatalogControllerIT {
 
     @Autowired
