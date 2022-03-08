@@ -53,4 +53,27 @@ class CatalogControllerIT {
         assertEquals(2, all.size());
     }
 
+    @Test
+    public void getByManufacturer() {
+        // Given
+        Manufacturer manufacturer1 = manufacturerJpaRepository.save(new Manufacturer("Producent 1", "last name 1"));
+        Manufacturer manufacturer2 = manufacturerJpaRepository.save(new Manufacturer("Producent 2", "last name 1"));
+        Honey honey1 = useCase.addHoney(new CreateHoneyCommand(
+                "Name1",
+                Set.of(manufacturer1.getId()),
+                new BigDecimal("200"),
+                55,
+                25L));
+        Honey honey2 = useCase.addHoney(new CreateHoneyCommand(
+                "Name2",
+                Set.of(manufacturer2.getId()),
+                new BigDecimal("999"),
+                522,
+                999L));
+        // When
+        List<Honey> all = controller.getAll(Optional.empty(), Optional.empty(), Optional.of("Producent 2"), false, 1);
+        // Then
+        assertEquals(1, all.size());
+        assertEquals("Name2", all.get(0).getName());
+    }
 }
