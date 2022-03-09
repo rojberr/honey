@@ -1,21 +1,23 @@
 package com.jaybee.honey.order.application;
 
+import com.jaybee.honey.catalog.application.port.CatalogUseCase;
 import com.jaybee.honey.catalog.db.HoneyJpaRepository;
 import com.jaybee.honey.catalog.domain.Honey;
 import com.jaybee.honey.order.domain.Recipient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.math.BigDecimal;
 
 import static com.jaybee.honey.order.application.port.ManipulateOrderUseCase.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest
-@Import({ManipulateOrderService.class})
+@SpringBootTest
+@AutoConfigureTestDatabase
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class ManipulateOrderServiceTest {
 
     @Autowired
@@ -24,11 +26,14 @@ class ManipulateOrderServiceTest {
     @Autowired
     ManipulateOrderService service;
 
+    @Autowired
+    CatalogUseCase catalogUseCase;
+
     @Test
     public void userCanPlaceOrder() {
         // Given
-        Honey honey1 = givenHoney1(88L);
-        Honey honey2 = givenHoney2(44L);
+        Honey honey1 = givenHoney1(50L);
+        Honey honey2 = givenHoney2(50L);
         PlaceOrderCommand command = PlaceOrderCommand
                 .builder()
                 .recipient(recipient())
@@ -41,14 +46,16 @@ class ManipulateOrderServiceTest {
 
         // Then
         assertTrue(response.isSuccess());
+        assertEquals(40L, catalogUseCase.findById(honey1.getId())
+                .get().getAvailable());
     }
 
     private Honey givenHoney1(long available) {
-        return honeyRepository.save(new Honey("Name 1", BigDecimal.valueOf(25), 99, available));
+        return honeyRepository.save(new Honey("Name 1", BigDecimal.valueOf(25), 123, available));
     }
 
     private Honey givenHoney2(long available) {
-        return honeyRepository.save(new Honey("Name 2", BigDecimal.valueOf(50), 1234, available));
+        return honeyRepository.save(new Honey("Name 2", BigDecimal.valueOf(50), 1233, available));
     }
 
     private Recipient recipient() {
