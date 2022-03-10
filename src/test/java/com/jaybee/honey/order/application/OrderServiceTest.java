@@ -36,6 +36,7 @@ class OrderServiceTest {
     QueryOrderUseCase queryOrderService;
 
     String userEmail = "user@test.test";
+    String adminEmail = "admin@test.test";
 
     @Test
     public void userCanPlaceOrder() {
@@ -163,6 +164,22 @@ class OrderServiceTest {
         // Then
         assertEquals(10L, availableCopiesOf(honey1));
         assertEquals(OrderStatus.NEW, queryOrderService.findById(orderId).get().getStatus());
+    }
+
+    @Test
+    public void adminCanRevokeUsersOrder() {
+        // Given
+        Honey honey1 = givenHoney1(50L);
+        Long orderId = placeOrder(honey1.getId(), 40, userEmail);
+        assertEquals(10L, availableCopiesOf(honey1));
+
+        // When
+        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, adminEmail);
+        service.updateOrderStatus(command);
+
+        // Then
+        assertEquals(50L, availableCopiesOf(honey1));
+        assertEquals(OrderStatus.CANCELLED, queryOrderService.findById(orderId).get().getStatus());
     }
 
     private Long placeOrder(Long honeyId, int quantity, String email) {
