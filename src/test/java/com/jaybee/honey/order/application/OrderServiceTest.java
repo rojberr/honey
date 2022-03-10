@@ -35,8 +35,8 @@ class OrderServiceTest {
     @Autowired
     QueryOrderUseCase queryOrderService;
 
-    String userEmail = "user@test.test";
-    String adminEmail = "admin@test.test";
+    private final String userEmail = "user@test.test";
+    private final String adminEmail = "admin@test.test";
 
     @Test
     public void userCanPlaceOrder() {
@@ -181,7 +181,6 @@ class OrderServiceTest {
         assertEquals(50L, availableCopiesOf(honey1));
         assertEquals(OrderStatus.CANCELLED, queryOrderService.findById(orderId).get().getStatus());
     }
-
 
     @Test
     public void adminCanMarkOrderAsPaid() {

@@ -1,5 +1,6 @@
 package com.jaybee.honey.order.application;
 
+import com.jaybee.honey.clock.Clock;
 import com.jaybee.honey.order.db.OrderJpaRepository;
 import com.jaybee.honey.order.domain.Order;
 import com.jaybee.honey.order.domain.OrderStatus;
@@ -23,12 +24,13 @@ public class AbandonedOrdersJob {
     private final OrderJpaRepository repository;
     private final ManipulateOrderService orderUseCase;
     private final OrderProperties properties;
+    private final Clock clock;
 
     @Transactional
     @Scheduled(cron = "${app.order.abandon-cron}")
     public void run() {
         Duration paymentPeriod = properties.getPaymentPeriod();
-        LocalDateTime olderThan = LocalDateTime.now().minus(paymentPeriod);
+        LocalDateTime olderThan = clock.now().minus(paymentPeriod);
         List<Order> orders = repository.findByStatusAndCreatedAtLessThanEqual(OrderStatus.NEW, olderThan);
         log.info("Found orders to be abandoned: " + orders.size());
         orders.forEach(order -> {
