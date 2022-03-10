@@ -15,47 +15,47 @@ import java.util.HashSet;
 import java.util.Set;
 
 class RichOrderTest {
-
-    @Test
-    public void calculateTotalPriceOfEmptyOrder() {
-        // given
-        RichOrder order = new RichOrder(
-                1L,
-                OrderStatus.NEW,
-                Collections.emptySet(),
-                Recipient.builder().build(),
-                LocalDateTime.now()
-        );
-        // when
-        BigDecimal price = order.totalPrice();
-        // then
-        Assertions.assertEquals(BigDecimal.ZERO, price);
-    }
-
-
-    @Test
-    public void calculatesTotalPrice() {
-        // given
-        Honey honey1 = new Honey();
-        honey1.setPrice(new BigDecimal("12.50"));
-        Honey honey2 = new Honey();
-        honey2.setPrice(new BigDecimal("30.20"));
-        Set<OrderItem> items = new HashSet<>(
-                Arrays.asList(
-                        new OrderItem(honey1, 2),
-                        new OrderItem(honey2, 5)
-                )
-        );
-        RichOrder order = new RichOrder(
-                1L,
-                OrderStatus.NEW,
-                items,
-                Recipient.builder().build(),
-                LocalDateTime.now()
-        );
-        // when
-        BigDecimal price = order.totalPrice();
-        // then
-        Assertions.assertEquals(new BigDecimal("176.00"), price);
-    }
+//
+//    @Test
+//    public void calculateTotalPriceOfEmptyOrder() {
+//        // given
+//        RichOrder order = new RichOrder(
+//                1L,
+//                OrderStatus.NEW,
+//                Collections.emptySet(),
+//                Recipient.builder().build(),
+//                LocalDateTime.now()
+//        );
+//        // when
+//        BigDecimal price = order.totalPrice();
+//        // then
+//        Assertions.assertEquals(BigDecimal.ZERO, price);
+//    }
+//
+//
+//    @Test
+//    public void calculatesTotalPrice() {
+//        // given
+//        Honey honey1 = new Honey();
+//        honey1.setPrice(new BigDecimal("12.50"));
+//        Honey honey2 = new Honey();
+//        honey2.setPrice(new BigDecimal("30.20"));
+//        Set<OrderItem> items = new HashSet<>(
+//                Arrays.asList(
+//                        new OrderItem(honey1, 2),
+//                        new OrderItem(honey2, 5)
+//                )
+//        );
+//        RichOrder order = new RichOrder(
+//                1L,
+//                OrderStatus.NEW,
+//                items,
+//                Recipient.builder().build(),
+//                LocalDateTime.now()
+//        );
+//        // when
+//        BigDecimal price = order.totalPrice();
+//        // then
+//        Assertions.assertEquals(new BigDecimal("176.00"), price);
+//    }
 }

@@ -2,6 +2,7 @@ package com.jaybee.honey.order.application;
 
 import com.jaybee.honey.catalog.application.port.CatalogUseCase;
 import com.jaybee.honey.catalog.db.HoneyJpaRepository;
+import com.jaybee.honey.catalog.domain.Delivery;
 import com.jaybee.honey.catalog.domain.Honey;
 import com.jaybee.honey.order.application.port.QueryOrderUseCase;
 import com.jaybee.honey.order.domain.OrderStatus;
@@ -201,32 +202,47 @@ class OrderServiceTest {
     @Test
     public void shippingCostsAreAddedToTotalOrderPrice() {
         // Given
-        Honey honey = givenHoney(50L, "49,90");
-
+        Honey honey = givenHoney(50L, "49.90");
         // When
         Long orderId = placeOrder(honey.getId(), 1);
-
         // Then
+        RichOrder order = orderOf(orderId);
         assertEquals("59.80", orderOf(orderId).getFinalPrice().toPlainString());
     }
 
     @Test
     public void shippingCostsAreDiscounterOver100Eur() {
-//        // Given
-//        Honey honey = givenHoney1(50L);
-//        // When
-//        Long orderId = placedOrder(honey.getId(), 3);
-//        // Then
+        // Given
+        Honey honey = givenHoney(50L, "49.90");
+        // When
+        Long orderId = placeOrder(honey.getId(), 3);
+        // Then
+        RichOrder order = orderOf(orderId);
+        assertEquals("149.70", order.getFinalPrice().toPlainString());
+        assertEquals("149.70", order.getOrderPrice().getItemsPrice().toPlainString());
     }
 
     @Test
     public void cheapestHoneyIsHalfPricedWHenTotalOver200Eur() {
+        // Given
+        Honey honey = givenHoney(50L, "49.90");
 
+        // When
+        Long orderId = placeOrder(honey.getId(), 5);
+
+        // Then
+        RichOrder order = orderOf(orderId);
+        assertEquals("224.55", order.getFinalPrice().toPlainString());
     }
 
     @Test
     public void cheapestHoneyIsFreeWhenTotalOver400Eur() {
-
+        // Given
+        Honey honey = givenHoney(50L, "49.90");
+        // When
+        Long orderId = placeOrder(honey.getId(), 10);
+        // Then
+        assertEquals("449.10", orderOf(orderId).getFinalPrice().toPlainString());
     }
 
     private Long placeOrder(Long honeyId, int quantity, String email) {
@@ -234,6 +250,7 @@ class OrderServiceTest {
                 .builder()
                 .recipient(recipient(email))
                 .item(new OrderItemCommand(honeyId, quantity))
+                .delivery(Delivery.COURIER)
                 .build();
         return service.placeOrder(command).getRight();
     }

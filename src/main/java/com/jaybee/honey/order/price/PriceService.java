@@ -3,6 +3,7 @@ package com.jaybee.honey.order.price;
 import com.jaybee.honey.order.domain.Order;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class PriceService {
             new TotalPriceDiscountStrategy()
     );
 
+    @Transactional
     public OrderPrice calculatePrice(Order order) {
         return new OrderPrice(
                 order.getItemsPrice(),
