@@ -6,6 +6,7 @@ import com.jaybee.honey.catalog.domain.Honey;
 import com.jaybee.honey.order.application.port.QueryOrderUseCase;
 import com.jaybee.honey.order.domain.OrderStatus;
 import com.jaybee.honey.order.domain.Recipient;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -67,6 +68,54 @@ class OrderServiceTest {
         // Then
         assertEquals(50L, availableCopiesOf(honey1));
         assertEquals(OrderStatus.CANCELLED, queryOrderService.findById(orderId).get().getStatus());
+    }
+
+    @Test
+    public void userCannotRevokePaidOrder() throws IllegalArgumentException {
+        // Given
+        Honey honey1 = givenHoney1(50L);
+        Long orderId = placeOrder(honey1.getId(), 40);
+        service.updateOrderStatus(orderId, OrderStatus.PAID);
+
+        // When
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            service.updateOrderStatus(orderId, OrderStatus.CANCELLED);
+        });
+        // Then
+        assertTrue(exception.getMessage().contains("Unable to mark "
+                + queryOrderService.findById(orderId).get().getStatus()
+                + " order as CANCELLED"));
+    }
+
+    @Test
+    public void userCannotRevokeShippedOrder() {
+        // Given
+        Honey honey1 = givenHoney1(50L);
+        Long orderId = placeOrder(honey1.getId(), 40);
+        service.updateOrderStatus(orderId, OrderStatus.PAID);
+        service.updateOrderStatus(orderId, OrderStatus.SHIPPED);
+        // When
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            service.updateOrderStatus(orderId, OrderStatus.CANCELLED);
+        });
+        // Then
+        assertTrue(exception.getMessage().contains("Unable to mark "
+                + queryOrderService.findById(orderId).get().getStatus()
+                + " order as CANCELLED"));
+    }
+
+    @Disabled("waiting for implementation")
+    public void userCannotOrderNoExistingHoneys() {
+        // Given
+        // When
+        // Then
+    }
+
+    @Disabled("waiting for implementation")
+    public void userCannotOrderNegativeNumberOfHoneys() {
+        // Given
+        // When
+        // Then
     }
 
     private Long placeOrder(Long honeyId, int quantity) {
