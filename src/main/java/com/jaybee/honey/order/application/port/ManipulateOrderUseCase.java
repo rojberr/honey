@@ -1,5 +1,6 @@
 package com.jaybee.honey.order.application.port;
 
+import com.jaybee.honey.catalog.domain.Delivery;
 import com.jaybee.honey.commons.Either;
 import com.jaybee.honey.order.domain.OrderStatus;
 import com.jaybee.honey.order.domain.Recipient;
@@ -21,6 +22,7 @@ public interface ManipulateOrderUseCase {
         @Singular
         List<OrderItemCommand> items;
         Recipient recipient;
+        Delivery delivery;
     }
 
     @Value

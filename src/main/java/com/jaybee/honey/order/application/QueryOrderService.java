@@ -1,9 +1,10 @@
 package com.jaybee.honey.order.application;
 
-import com.jaybee.honey.catalog.db.HoneyJpaRepository;
 import com.jaybee.honey.order.application.port.QueryOrderUseCase;
 import com.jaybee.honey.order.db.OrderJpaRepository;
 import com.jaybee.honey.order.domain.Order;
+import com.jaybee.honey.order.price.OrderPrice;
+import com.jaybee.honey.order.price.PriceService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 class QueryOrderService implements QueryOrderUseCase {
 
     private final OrderJpaRepository orderRepository;
-    private final HoneyJpaRepository honeyJpaRepository;
+    private final PriceService priceService;
 
     @Override
     @Transactional
@@ -34,12 +35,15 @@ class QueryOrderService implements QueryOrderUseCase {
     }
 
     private RichOrder toRichOrder(Order order) {
+        OrderPrice orderPrice = priceService.calculatePrice(order);
         return new RichOrder(
                 order.getId(),
                 order.getStatus(),
                 order.getItems(),
                 order.getRecipient(),
-                order.getCreatedAt()
+                order.getCreatedAt(),
+                orderPrice,
+                orderPrice.finlaPrice()
         );
     }
 }

@@ -3,6 +3,7 @@ package com.jaybee.honey.order.application;
 import com.jaybee.honey.order.domain.OrderItem;
 import com.jaybee.honey.order.domain.OrderStatus;
 import com.jaybee.honey.order.domain.Recipient;
+import com.jaybee.honey.order.price.OrderPrice;
 import lombok.Value;
 
 import java.math.BigDecimal;
@@ -17,11 +18,6 @@ class RichOrder {
     Set<OrderItem> items;
     Recipient recipient;
     LocalDateTime createdAt;
-
-
-    public BigDecimal totalPrice() {
-        return items.stream()
-                .map(item -> item.getHoney().getPrice().multiply(new BigDecimal(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
+    OrderPrice orderPrice;
+    BigDecimal finalPrice;
 }

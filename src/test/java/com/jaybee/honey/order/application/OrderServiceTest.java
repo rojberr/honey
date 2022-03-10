@@ -198,6 +198,37 @@ class OrderServiceTest {
         assertEquals(OrderStatus.PAID, queryOrderService.findById(orderId).get().getStatus());
     }
 
+    @Test
+    public void shippingCostsAreAddedToTotalOrderPrice() {
+        // Given
+        Honey honey = givenHoney(50L, "49,90");
+
+        // When
+        Long orderId = placeOrder(honey.getId(), 1);
+
+        // Then
+        assertEquals("59.80", orderOf(orderId).getFinalPrice().toPlainString());
+    }
+
+    @Test
+    public void shippingCostsAreDiscounterOver100Eur() {
+//        // Given
+//        Honey honey = givenHoney1(50L);
+//        // When
+//        Long orderId = placedOrder(honey.getId(), 3);
+//        // Then
+    }
+
+    @Test
+    public void cheapestHoneyIsHalfPricedWHenTotalOver200Eur() {
+
+    }
+
+    @Test
+    public void cheapestHoneyIsFreeWhenTotalOver400Eur() {
+
+    }
+
     private Long placeOrder(Long honeyId, int quantity, String email) {
         PlaceOrderCommand command = PlaceOrderCommand
                 .builder()
@@ -209,6 +240,14 @@ class OrderServiceTest {
 
     private Long placeOrder(Long honeyId, int quantity) {
         return placeOrder(honeyId, quantity, "example-client-email@email.com");
+    }
+
+    private RichOrder orderOf(Long orderId) {
+        return queryOrderService.findById(orderId).get();
+    }
+
+    private Honey givenHoney(long available, String price) {
+        return honeyRepository.save(new Honey("Name3", new BigDecimal(price), 321, available));
     }
 
     private Honey givenHoney1(long available) {
