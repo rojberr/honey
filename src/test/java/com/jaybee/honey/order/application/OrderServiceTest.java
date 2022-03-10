@@ -182,6 +182,23 @@ class OrderServiceTest {
         assertEquals(OrderStatus.CANCELLED, queryOrderService.findById(orderId).get().getStatus());
     }
 
+
+    @Test
+    public void adminCanMarkOrderAsPaid() {
+        // Given
+        Honey honey1 = givenHoney1(50L);
+        Long orderId = placeOrder(honey1.getId(), 40, userEmail);
+        assertEquals(10L, availableCopiesOf(honey1));
+
+        // When
+        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.PAID, adminEmail);
+        service.updateOrderStatus(command);
+
+        // Then
+        assertEquals(10L, availableCopiesOf(honey1));
+        assertEquals(OrderStatus.PAID, queryOrderService.findById(orderId).get().getStatus());
+    }
+
     private Long placeOrder(Long honeyId, int quantity, String email) {
         PlaceOrderCommand command = PlaceOrderCommand
                 .builder()
