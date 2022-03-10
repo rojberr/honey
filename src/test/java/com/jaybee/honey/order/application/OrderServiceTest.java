@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 
 import static com.jaybee.honey.order.application.port.ManipulateOrderUseCase.*;
@@ -104,18 +105,45 @@ class OrderServiceTest {
                 + " order as CANCELLED"));
     }
 
-    @Disabled("waiting for implementation")
+    @Test
     public void userCannotOrderNoExistingHoneys() {
-        // Given
         // When
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+            placeOrder(0L, 40);
+        });
         // Then
+        assertTrue(exception.getMessage().contains("Unable to find"));
     }
 
-    @Disabled("waiting for implementation")
+    @Test
+    public void userCannotOrderMoreBooksThanAvailable() {
+        // Given
+        Honey honey1 = givenHoney1(5L);
+        PlaceOrderCommand command = PlaceOrderCommand
+                .builder()
+                .recipient(recipient())
+                .item(new OrderItemCommand(honey1.getId(), 10))
+                .build();
+
+        // When
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            service.placeOrder(command);
+        });
+        // Then
+        assertTrue(exception.getMessage().contains("Too many products with id " + honey1.getId() + " requested: 10 available: 5 !"));
+    }
+
+    @Disabled("Needs to be implemented")
     public void userCannotOrderNegativeNumberOfHoneys() {
         // Given
+        Honey honey1 = givenHoney1(5L);
         // When
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            Long orderId = placeOrder(honey1.getId(), -5);
+        });
+
         // Then
+        assertTrue(exception.getMessage().contains("Too many products with id " + honey1.getId() + " requested: 10 available: 5 !"));
     }
 
     private Long placeOrder(Long honeyId, int quantity) {
@@ -137,25 +165,6 @@ class OrderServiceTest {
 
     private Recipient recipient() {
         return Recipient.builder().email("client-email@email.com").build();
-    }
-
-    @Test
-    public void userCantOrderMoreBooksThanAvailable() {
-        // Given
-        Honey honey1 = givenHoney1(5L);
-        PlaceOrderCommand command = PlaceOrderCommand
-                .builder()
-                .recipient(recipient())
-                .item(new OrderItemCommand(honey1.getId(), 10))
-                .build();
-
-        // When
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            service.placeOrder(command);
-        });
-
-        // Then
-        assertTrue(exception.getMessage().contains("Too many products with id " + honey1.getId() + " requested: 10 available: 5 !"));
     }
 
     private Long availableCopiesOf(Honey honey1) {
