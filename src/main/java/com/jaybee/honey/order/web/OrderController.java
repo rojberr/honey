@@ -1,20 +1,21 @@
 package com.jaybee.honey.order.web;
 
+import com.jaybee.honey.order.application.RichOrder;
 import com.jaybee.honey.order.application.port.ManipulateOrderUseCase;
 import com.jaybee.honey.order.application.port.ManipulateOrderUseCase.PlaceOrderCommand;
 import com.jaybee.honey.order.application.port.QueryOrderUseCase;
 import com.jaybee.honey.order.domain.OrderStatus;
 import com.jaybee.honey.web.CreatedURI;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
-import com.jaybee.honey.order.application.RichOrder;
+import static com.jaybee.honey.order.application.port.ManipulateOrderUseCase.UpdateStatusCommand;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -53,21 +54,19 @@ class OrderController {
 
     @PutMapping("/{id}/status")
     @ResponseStatus(ACCEPTED)
-    public void updateOrderStatus(@PathVariable Long id, @RequestBody UpdateStatusCommand command) {
+    public void updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        String status = body.get("status");
         OrderStatus orderStatus = OrderStatus
-                .parseString(command.status)
-                .orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "Unknown status: " + command.status));
-        manipulateOrder.updateOrderStatus(id, orderStatus);
+                .parseString(status)
+                .orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "Unknown status: " + status));
+        // TODO-rojberr
+        UpdateStatusCommand command = new UpdateStatusCommand(id, orderStatus, null);
+        manipulateOrder.updateOrderStatus(command);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(NO_CONTENT)
     public void deleteOrder(@PathVariable Long id) {
         manipulateOrder.deleteOrderById(id);
-    }
-
-    @Data
-    static class UpdateStatusCommand {
-        String status;
     }
 }

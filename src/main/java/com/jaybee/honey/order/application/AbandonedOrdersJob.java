@@ -13,6 +13,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.jaybee.honey.order.application.port.ManipulateOrderUseCase.UpdateStatusCommand;
+
 @Slf4j
 @Component
 @AllArgsConstructor
@@ -29,6 +31,9 @@ public class AbandonedOrdersJob {
         LocalDateTime olderThan = LocalDateTime.now().minus(paymentPeriod);
         List<Order> orders = repository.findByStatusAndCreatedAtLessThanEqual(OrderStatus.NEW, olderThan);
         log.info("Found orders to be abandoned: " + orders.size());
-        orders.forEach(order -> orderUseCase.updateOrderStatus(order.getId(), OrderStatus.ABANDONED));
+        orders.forEach(order -> {
+            String adminEmail = "admin@test.test";
+            orderUseCase.updateOrderStatus(new UpdateStatusCommand(order.getId(), OrderStatus.ABANDONED, adminEmail));
+        });
     }
 }

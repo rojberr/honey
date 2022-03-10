@@ -5,7 +5,10 @@ import com.jaybee.honey.catalog.domain.Honey;
 import com.jaybee.honey.order.application.port.ManipulateOrderUseCase;
 import com.jaybee.honey.order.db.OrderJpaRepository;
 import com.jaybee.honey.order.db.RecipientJpaRepository;
-import com.jaybee.honey.order.domain.*;
+import com.jaybee.honey.order.domain.Order;
+import com.jaybee.honey.order.domain.OrderItem;
+import com.jaybee.honey.order.domain.Recipient;
+import com.jaybee.honey.order.domain.UpdateStatusResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -70,15 +73,26 @@ class ManipulateOrderService implements ManipulateOrderUseCase {
     }
 
     @Override
-    public void updateOrderStatus(Long id, OrderStatus status) {
-        repository.findById(id)
-                .ifPresent(order -> {
-                    UpdateStatusResult result = order.updateStatus(status);
+    public UpdateStatusResponse updateOrderStatus(UpdateStatusCommand command) {
+        return repository.findById(command.getOrderId())
+                .map(order -> {
+                    if (!hasAccess(command, order)) {
+                        return UpdateStatusResponse.failure("Unauthorized");
+                    }
+                    UpdateStatusResult result = order.updateStatus(command.getStatus());
                     if (result.isRevoked()) {
                         honeyJpaRepository.saveAll(revokeHoneys(order.getItems()));
                     }
                     repository.save(order);
-                });
+                    return UpdateStatusResponse.success(order.getStatus());
+                })
+                .orElse(UpdateStatusResponse.failure("Order not found"));
+    }
+
+    private boolean hasAccess(UpdateStatusCommand command, Order order) {
+        String email = command.getEmail();
+        return email.equalsIgnoreCase(order.getRecipient().getEmail()) ||
+                email.equalsIgnoreCase("admin@test.test");
     }
 
     private Set<Honey> revokeHoneys(Set<OrderItem> items) {

@@ -6,7 +6,6 @@ import com.jaybee.honey.catalog.domain.Honey;
 import com.jaybee.honey.order.application.port.QueryOrderUseCase;
 import com.jaybee.honey.order.domain.OrderStatus;
 import com.jaybee.honey.order.domain.Recipient;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -36,6 +35,8 @@ class OrderServiceTest {
     @Autowired
     QueryOrderUseCase queryOrderService;
 
+    String userEmail = "user@test.test";
+
     @Test
     public void userCanPlaceOrder() {
         // Given
@@ -60,11 +61,12 @@ class OrderServiceTest {
     public void userCanRevokeOrder() {
         // Given
         Honey honey1 = givenHoney1(50L);
-        Long orderId = placeOrder(honey1.getId(), 40);
+        Long orderId = placeOrder(honey1.getId(), 40, userEmail);
         assertEquals(10L, availableCopiesOf(honey1));
 
         // When
-        service.updateOrderStatus(orderId, OrderStatus.CANCELLED);
+        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, userEmail);
+        service.updateOrderStatus(command);
 
         // Then
         assertEquals(50L, availableCopiesOf(honey1));
@@ -75,29 +77,31 @@ class OrderServiceTest {
     public void userCannotRevokePaidOrder() throws IllegalArgumentException {
         // Given
         Honey honey1 = givenHoney1(50L);
-        Long orderId = placeOrder(honey1.getId(), 40);
-        service.updateOrderStatus(orderId, OrderStatus.PAID);
+        Long orderId = placeOrder(honey1.getId(), 40, userEmail);
+        service.updateOrderStatus(new UpdateStatusCommand(orderId, OrderStatus.PAID, userEmail));
 
         // When
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            service.updateOrderStatus(orderId, OrderStatus.CANCELLED);
+            service.updateOrderStatus(new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, userEmail));
         });
+
         // Then
+        assertEquals(10L, availableCopiesOf(honey1));
         assertTrue(exception.getMessage().contains("Unable to mark "
-                + queryOrderService.findById(orderId).get().getStatus()
-                + " order as CANCELLED"));
+                + queryOrderService.findById(orderId).get().getStatus() + " order as CANCELLED"));
     }
 
     @Test
     public void userCannotRevokeShippedOrder() {
         // Given
         Honey honey1 = givenHoney1(50L);
-        Long orderId = placeOrder(honey1.getId(), 40);
-        service.updateOrderStatus(orderId, OrderStatus.PAID);
-        service.updateOrderStatus(orderId, OrderStatus.SHIPPED);
+        Long orderId = placeOrder(honey1.getId(), 40, userEmail);
+        service.updateOrderStatus(new UpdateStatusCommand(orderId, OrderStatus.PAID, userEmail));
+        service.updateOrderStatus(new UpdateStatusCommand(orderId, OrderStatus.SHIPPED, userEmail));
         // When
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            service.updateOrderStatus(orderId, OrderStatus.CANCELLED);
+            service.updateOrderStatus(new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, userEmail));
+
         });
         // Then
         assertTrue(exception.getMessage().contains("Unable to mark "
@@ -133,26 +137,45 @@ class OrderServiceTest {
         assertTrue(exception.getMessage().contains("Too many products with id " + honey1.getId() + " requested: 10 available: 5 !"));
     }
 
-    @Disabled("Needs to be implemented")
+    @Test
     public void userCannotOrderNegativeNumberOfHoneys() {
         // Given
         Honey honey1 = givenHoney1(5L);
         // When
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        Exception exception = assertThrows(Exception.class, () -> {
             Long orderId = placeOrder(honey1.getId(), -5);
         });
-
         // Then
-        assertTrue(exception.getMessage().contains("Too many products with id " + honey1.getId() + " requested: 10 available: 5 !"));
+        assertTrue(exception.getMessage().contains("The ordered quantity cannot be equal or less than zero"));
     }
 
-    private Long placeOrder(Long honeyId, int quantity) {
+    @Test
+    public void userCannotRevokeOtherUsersOrder() {
+        // Given
+        Honey honey1 = givenHoney1(50L);
+        Long orderId = placeOrder(honey1.getId(), 40, userEmail);
+        assertEquals(10L, availableCopiesOf(honey1));
+
+        // When
+        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, "other@user.com");
+        service.updateOrderStatus(command);
+
+        // Then
+        assertEquals(10L, availableCopiesOf(honey1));
+        assertEquals(OrderStatus.NEW, queryOrderService.findById(orderId).get().getStatus());
+    }
+
+    private Long placeOrder(Long honeyId, int quantity, String email) {
         PlaceOrderCommand command = PlaceOrderCommand
                 .builder()
-                .recipient(recipient())
+                .recipient(recipient(email))
                 .item(new OrderItemCommand(honeyId, quantity))
                 .build();
         return service.placeOrder(command).getRight();
+    }
+
+    private Long placeOrder(Long honeyId, int quantity) {
+        return placeOrder(honeyId, quantity, "example-client-email@email.com");
     }
 
     private Honey givenHoney1(long available) {
@@ -164,7 +187,15 @@ class OrderServiceTest {
     }
 
     private Recipient recipient() {
-        return Recipient.builder().email("client-email@email.com").build();
+        return Recipient.builder()
+                .email("example-client-email@email.com")
+                .build();
+    }
+
+    private Recipient recipient(String email) {
+        return Recipient.builder()
+                .email(email)
+                .build();
     }
 
     private Long availableCopiesOf(Honey honey1) {
