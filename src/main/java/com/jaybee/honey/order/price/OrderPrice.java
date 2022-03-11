@@ -10,7 +10,7 @@ public class OrderPrice {
     BigDecimal deliveryPrice;
     BigDecimal discounts;
 
-    public BigDecimal finlaPrice() {
+    public BigDecimal finalPrice() {
         return itemsPrice.add(deliveryPrice).subtract(discounts);
     }
 }

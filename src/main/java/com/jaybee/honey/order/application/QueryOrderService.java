@@ -44,7 +44,7 @@ class QueryOrderService implements QueryOrderUseCase {
                 order.getRecipient(),
                 order.getCreatedAt(),
                 orderPrice,
-                orderPrice.finlaPrice()
+                orderPrice.finalPrice()
         );
     }
 }

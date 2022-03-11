@@ -2,9 +2,9 @@ package com.jaybee.honey.order.application;
 
 import com.jaybee.honey.catalog.application.port.CatalogUseCase;
 import com.jaybee.honey.catalog.db.HoneyJpaRepository;
+import com.jaybee.honey.catalog.domain.Delivery;
 import com.jaybee.honey.catalog.domain.Honey;
 import com.jaybee.honey.clock.Clock;
-import com.jaybee.honey.order.application.port.ManipulateOrderUseCase;
 import com.jaybee.honey.order.domain.OrderStatus;
 import com.jaybee.honey.order.domain.Recipient;
 import org.junit.jupiter.api.Test;
@@ -17,6 +17,8 @@ import org.springframework.context.annotation.Bean;
 import java.math.BigDecimal;
 import java.time.Duration;
 
+import static com.jaybee.honey.order.application.port.ManipulateOrderUseCase.OrderItemCommand;
+import static com.jaybee.honey.order.application.port.ManipulateOrderUseCase.PlaceOrderCommand;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(
@@ -74,10 +76,10 @@ class AbandonedOrdersJobTest {
     }
 
     private Long placeOrder(Long honeyId, int quantity, String email) {
-        ManipulateOrderUseCase.PlaceOrderCommand command = ManipulateOrderUseCase.PlaceOrderCommand
+        PlaceOrderCommand command = PlaceOrderCommand
                 .builder()
                 .recipient(recipient(email))
-                .item(new ManipulateOrderUseCase.OrderItemCommand(honeyId, quantity))
+                .item(new OrderItemCommand(honeyId, quantity))
                 .build();
         return manipulateOrderService.placeOrder(command).getRight();
     }

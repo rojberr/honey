@@ -26,6 +26,7 @@ public class Order extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private OrderStatus status = OrderStatus.NEW;
 
+    @Singular
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Set<OrderItem> items;
@@ -56,6 +57,9 @@ public class Order extends BaseEntity {
     }
 
     public BigDecimal getDeliveryPrice() {
+        if (items.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
         return delivery.getPrice();
     }
 }
