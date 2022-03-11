@@ -74,7 +74,7 @@ public class CatalogController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void updateHoney(@PathVariable Long id,
                             @RequestBody RestHoneyCommand command) {
