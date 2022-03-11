@@ -5,9 +5,13 @@ import com.jaybee.honey.order.application.port.ManipulateOrderUseCase;
 import com.jaybee.honey.order.application.port.ManipulateOrderUseCase.PlaceOrderCommand;
 import com.jaybee.honey.order.application.port.QueryOrderUseCase;
 import com.jaybee.honey.order.domain.OrderStatus;
+import com.jaybee.honey.security.UserSecurity;
 import com.jaybee.honey.web.CreatedURI;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -24,19 +28,27 @@ import static org.springframework.http.HttpStatus.*;
 class OrderController {
     private final ManipulateOrderUseCase manipulateOrder;
     private final QueryOrderUseCase queryOrder;
+    private final UserSecurity userSecurity;
 
-    // Available only for ADMIN
+    @Secured({"ROLE_ADMIN"})
     @GetMapping
     public List<RichOrder> getOrders() {
         return queryOrder.findAll();
     }
 
-    // Available only for OWNER or ADMIN
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @GetMapping("/{id}")
-    public ResponseEntity<RichOrder> getOrderById(@PathVariable Long id) {
+    public ResponseEntity<RichOrder> getOrderById(@PathVariable Long id, @AuthenticationPrincipal User user) {
         return queryOrder.findById(id)
-                .map(ResponseEntity::ok)
+                .map(order -> authorize(order, user))
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    private ResponseEntity<RichOrder> authorize(RichOrder order, User user) {
+        if (userSecurity.isOwnerOrAdmin(order.getRecipient().getEmail(), user)) {
+            return ResponseEntity.ok(order);
+        }
+        return ResponseEntity.status(FORBIDDEN).build();
     }
 
     @PostMapping
@@ -56,6 +68,7 @@ class OrderController {
 
     // Every status change for ADMIN
     // Cancelling only for OWNER
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PatchMapping("/{id}/status")
     @ResponseStatus(ACCEPTED)
     public ResponseEntity<Object> updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
@@ -72,7 +85,7 @@ class OrderController {
                 );
     }
 
-    // Available only for ADMIN
+    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ResponseStatus(NO_CONTENT)
     public void deleteOrder(@PathVariable Long id) {

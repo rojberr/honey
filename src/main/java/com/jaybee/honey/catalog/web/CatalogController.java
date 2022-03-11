@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -61,6 +62,7 @@ public class CatalogController {
         return catalog.findAll().stream().limit(limit).collect(Collectors.toList());
     }
 
+    @Secured({"ROLE_ADMIN"})
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
 
@@ -74,7 +76,7 @@ public class CatalogController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Available only for ADMIN
+    @Secured({"ROLE_ADMIN"})
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void updateHoney(@PathVariable Long id,
@@ -86,7 +88,7 @@ public class CatalogController {
         }
     }
 
-    // Available only for ADMIN
+    @Secured({"ROLE_ADMIN"})
     @PutMapping(value = "/{id}/cover", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void addHoneyCover(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
@@ -99,14 +101,14 @@ public class CatalogController {
         ));
     }
 
-    // Available only for ADMIN
+    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}/cover")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeHoneyCover(@PathVariable Long id) {
         catalog.removeHoneyCover(id);
     }
 
-    // Available only for ADMIN
+    @Secured({"ROLE_ADMIN"})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Void> addHoney(@Valid @RequestBody CatalogController.RestHoneyCommand command) {
@@ -115,7 +117,7 @@ public class CatalogController {
         return ResponseEntity.created(uri).build();
     }
 
-    // Available only for ADMIN
+    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable Long id) {
