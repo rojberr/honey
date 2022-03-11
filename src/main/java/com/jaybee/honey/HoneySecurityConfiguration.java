@@ -15,7 +15,8 @@ public class HoneySecurityConfiguration extends WebSecurityConfigurerAdapter {
         // GET catalog, GET catalog/id
         http
                 .authorizeRequests()
-                .mvcMatchers(HttpMethod.GET, "/catalog/**", "/uploads/**").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/catalog/**", "/uploads/**", "/manufacturers/**").permitAll()
+                .mvcMatchers(HttpMethod.POST, "/orders").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()

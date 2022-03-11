@@ -56,7 +56,7 @@ class OrderController {
 
     // Every status change for ADMIN
     // Cancelling only for OWNER
-    @PutMapping("/{id}/status")
+    @PatchMapping("/{id}/status")
     @ResponseStatus(ACCEPTED)
     public ResponseEntity<Object> updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
         String status = body.get("status");
