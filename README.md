@@ -1,5 +1,7 @@
 # Honey
 
+[![Build Status](https://app.travis-ci.com/rojberr/honey.svg?branch=master)](https://app.travis-ci.com/rojberr/honey)
+
 This is an interactive shop site, where you can buy honey related things.
 
 Made by me, mostly for me. One day we may go live, cause my family owns a bee-garden.
@@ -74,3 +76,7 @@ Admin tests include:
 ## UML
 
 ## Changes
+
+## Author  
+
+* rojberr - [drzymala.dev](https://drzymala.dev)
