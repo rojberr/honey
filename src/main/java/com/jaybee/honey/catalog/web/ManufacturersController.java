@@ -18,9 +18,10 @@ public class ManufacturersController {
 
     private final ManufacturerUseCase manufacturerUseCase;
 
+    // GET available for everyone
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Manufacturer> getManufacturers() {
+    public List<Manufacturer> findAll() {
         return manufacturerUseCase.findAll();
     }
 }

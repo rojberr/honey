@@ -25,11 +25,13 @@ class OrderController {
     private final ManipulateOrderUseCase manipulateOrder;
     private final QueryOrderUseCase queryOrder;
 
+    // Available only for ADMIN
     @GetMapping
     public List<RichOrder> getOrders() {
         return queryOrder.findAll();
     }
 
+    // Available only for OWNER or ADMIN
     @GetMapping("/{id}")
     public ResponseEntity<RichOrder> getOrderById(@PathVariable Long id) {
         return queryOrder.findById(id)
@@ -52,6 +54,8 @@ class OrderController {
         return new CreatedURI("/" + orderId).uri();
     }
 
+    // Every status change for ADMIN
+    // Cancelling only for OWNER
     @PutMapping("/{id}/status")
     @ResponseStatus(ACCEPTED)
     public ResponseEntity<Object> updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
@@ -68,6 +72,7 @@ class OrderController {
                 );
     }
 
+    // Available only for ADMIN
     @DeleteMapping("/{id}")
     @ResponseStatus(NO_CONTENT)
     public void deleteOrder(@PathVariable Long id) {
