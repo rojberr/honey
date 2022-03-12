@@ -9,6 +9,7 @@ import com.jaybee.honey.order.domain.Order;
 import com.jaybee.honey.order.domain.OrderItem;
 import com.jaybee.honey.order.domain.Recipient;
 import com.jaybee.honey.order.domain.UpdateStatusResult;
+import com.jaybee.honey.security.UserSecurity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ class ManipulateOrderService implements ManipulateOrderUseCase {
     private final OrderJpaRepository repository;
     private final HoneyJpaRepository honeyJpaRepository;
     private final RecipientJpaRepository recipientJpaRepository;
+    private final UserSecurity userSecurity;
 
     @Override
     public PlaceOrderResponse placeOrder(PlaceOrderCommand command) {
@@ -74,26 +76,21 @@ class ManipulateOrderService implements ManipulateOrderUseCase {
     }
 
     @Override
+    @Transactional
     public UpdateStatusResponse updateOrderStatus(UpdateStatusCommand command) {
         return repository.findById(command.getOrderId())
                 .map(order -> {
-                    if (!hasAccess(command, order)) {
-                        return UpdateStatusResponse.failure("Unauthorized");
+                    if (userSecurity.isOwnerOrAdmin(order.getRecipient().getEmail(), command.getUser())) {
+                        UpdateStatusResult result = order.updateStatus(command.getStatus());
+                        if (result.isRevoked()) {
+                            honeyJpaRepository.saveAll(revokeHoneys(order.getItems()));
+                        }
+                        repository.save(order);
+                        return UpdateStatusResponse.success(order.getStatus());
                     }
-                    UpdateStatusResult result = order.updateStatus(command.getStatus());
-                    if (result.isRevoked()) {
-                        honeyJpaRepository.saveAll(revokeHoneys(order.getItems()));
-                    }
-                    repository.save(order);
-                    return UpdateStatusResponse.success(order.getStatus());
+                    return UpdateStatusResponse.failure(Error.FORBIDDEN);
                 })
-                .orElse(UpdateStatusResponse.failure("Order not found"));
-    }
-
-    private boolean hasAccess(UpdateStatusCommand command, Order order) {
-        String email = command.getEmail();
-        return email.equalsIgnoreCase(order.getRecipient().getEmail()) ||
-                email.equalsIgnoreCase("admin@test.test");
+                .orElse(UpdateStatusResponse.failure(Error.NOT_FOUND));
     }
 
     private Set<Honey> revokeHoneys(Set<OrderItem> items) {

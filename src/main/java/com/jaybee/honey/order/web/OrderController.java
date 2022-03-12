@@ -66,22 +66,19 @@ class OrderController {
         return new CreatedURI("/" + orderId).uri();
     }
 
-    // Every status change for ADMIN
-    // Cancelling only for OWNER
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PatchMapping("/{id}/status")
-    @ResponseStatus(ACCEPTED)
-    public ResponseEntity<Object> updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
+    public ResponseEntity<Object> updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> body, @AuthenticationPrincipal User user) {
         String status = body.get("status");
         OrderStatus orderStatus = OrderStatus
                 .parseString(status)
                 .orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "Unknown status: " + status));
-        UpdateStatusCommand command = new UpdateStatusCommand(id, orderStatus, null);
+        UpdateStatusCommand command = new UpdateStatusCommand(id, orderStatus, user);
         return manipulateOrder
                 .updateOrderStatus(command)
                 .handle(
-                        success -> ResponseEntity.status(ACCEPTED).body(success),
-                        error -> ResponseEntity.status(BAD_REQUEST).body(error)
+                        anotherStatus -> ResponseEntity.accepted().build(),
+                        error -> ResponseEntity.status(error.getStatus()).build()
                 );
     }
 

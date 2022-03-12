@@ -5,6 +5,8 @@ import com.jaybee.honey.commons.Either;
 import com.jaybee.honey.order.domain.OrderStatus;
 import com.jaybee.honey.order.domain.Recipient;
 import lombok.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.User;
 
 import java.util.List;
 
@@ -45,7 +47,7 @@ public interface ManipulateOrderUseCase {
     class UpdateStatusCommand {
         Long orderId;
         OrderStatus status;
-        String email;
+        User user;
     }
 
 
@@ -63,8 +65,8 @@ public interface ManipulateOrderUseCase {
         }
     }
 
-    class UpdateStatusResponse extends Either<String, OrderStatus> {
-        public UpdateStatusResponse(boolean success, String left, OrderStatus right) {
+    class UpdateStatusResponse extends Either<Error, OrderStatus> {
+        public UpdateStatusResponse(boolean success, Error left, OrderStatus right) {
             super(success, left, right);
         }
 
@@ -72,8 +74,17 @@ public interface ManipulateOrderUseCase {
             return new UpdateStatusResponse(true, null, status);
         }
 
-        public static UpdateStatusResponse failure(String error) {
+        public static UpdateStatusResponse failure(Error error) {
             return new UpdateStatusResponse(false, error, null);
         }
+    }
+
+    @AllArgsConstructor
+    @Getter
+    enum Error {
+        NOT_FOUND(HttpStatus.NOT_FOUND),
+        FORBIDDEN(HttpStatus.FORBIDDEN);
+
+        private final HttpStatus status;
     }
 }

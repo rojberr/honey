@@ -11,10 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.test.annotation.DirtiesContext;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
+import java.util.List;
 
 import static com.jaybee.honey.order.application.port.ManipulateOrderUseCase.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,7 +40,6 @@ class OrderServiceTest {
     QueryOrderUseCase queryOrderService;
 
     private final String userEmail = "user@test.test";
-    private final String adminEmail = "admin@test.test";
 
     @Test
     public void userCanPlaceOrder() {
@@ -67,7 +69,7 @@ class OrderServiceTest {
         assertEquals(10L, availableCopiesOf(honey1));
 
         // When
-        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, userEmail);
+        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, user(userEmail));
         service.updateOrderStatus(command);
 
         // Then
@@ -80,11 +82,11 @@ class OrderServiceTest {
         // Given
         Honey honey1 = givenHoney1(50L);
         Long orderId = placeOrder(honey1.getId(), 40, userEmail);
-        service.updateOrderStatus(new UpdateStatusCommand(orderId, OrderStatus.PAID, userEmail));
+        service.updateOrderStatus(new UpdateStatusCommand(orderId, OrderStatus.PAID, user(userEmail)));
 
         // When
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            service.updateOrderStatus(new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, userEmail));
+            service.updateOrderStatus(new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, user(userEmail)));
         });
 
         // Then
@@ -98,11 +100,11 @@ class OrderServiceTest {
         // Given
         Honey honey1 = givenHoney1(50L);
         Long orderId = placeOrder(honey1.getId(), 40, userEmail);
-        service.updateOrderStatus(new UpdateStatusCommand(orderId, OrderStatus.PAID, userEmail));
-        service.updateOrderStatus(new UpdateStatusCommand(orderId, OrderStatus.SHIPPED, userEmail));
+        service.updateOrderStatus(new UpdateStatusCommand(orderId, OrderStatus.PAID, user(userEmail)));
+        service.updateOrderStatus(new UpdateStatusCommand(orderId, OrderStatus.SHIPPED, user(userEmail)));
         // When
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            service.updateOrderStatus(new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, userEmail));
+            service.updateOrderStatus(new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, user(userEmail)));
 
         });
         // Then
@@ -159,7 +161,7 @@ class OrderServiceTest {
         assertEquals(10L, availableCopiesOf(honey1));
 
         // When
-        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, "other@user.com");
+        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, user("otheruser@test.test"));
         service.updateOrderStatus(command);
 
         // Then
@@ -175,7 +177,7 @@ class OrderServiceTest {
         assertEquals(10L, availableCopiesOf(honey1));
 
         // When
-        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, adminEmail);
+        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELLED, adminUser());
         service.updateOrderStatus(command);
 
         // Then
@@ -191,7 +193,7 @@ class OrderServiceTest {
         assertEquals(10L, availableCopiesOf(honey1));
 
         // When
-        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.PAID, adminEmail);
+        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.PAID, adminUser());
         service.updateOrderStatus(command);
 
         // Then
@@ -273,6 +275,14 @@ class OrderServiceTest {
 
     private Honey givenHoney2(long available) {
         return honeyRepository.save(new Honey("Name 2", BigDecimal.valueOf(50), 1233, available));
+    }
+
+    private User user(String email) {
+        return new User(email, "admin", List.of(new SimpleGrantedAuthority("ROLE_USER")));
+    }
+
+    private User adminUser() {
+        return new User("admin@test.test", "", List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
     }
 
     private Recipient recipient() {
