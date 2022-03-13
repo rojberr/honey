@@ -1,6 +1,7 @@
 package com.jaybee.honey.security;
 
 
+import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.List;
 
@@ -28,14 +30,21 @@ public class HoneySecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .mvcMatchers(HttpMethod.GET, "/catalog/**", "/uploads/**", "/manufacturers/**").permitAll()
-                .mvcMatchers(HttpMethod.POST, "/orders").permitAll()
+                .mvcMatchers(HttpMethod.POST, "/orders", "/login").permitAll()
                 .anyRequest().authenticated()
-            .and()
-                .formLogin().permitAll()
             .and()
                 .httpBasic()
             .and()
-                .csrf().disable();
+                .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        http.csrf().disable();
+    }
+
+    @SneakyThrows
+    private JsonUsernameAuthenticationFilter authenticationFilter() {
+        JsonUsernameAuthenticationFilter filter = new JsonUsernameAuthenticationFilter();
+        filter.setAuthenticationManager(super.authenticationManager());
+        return filter;
     }
 
     @Override
