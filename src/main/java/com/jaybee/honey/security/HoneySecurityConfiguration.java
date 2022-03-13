@@ -30,9 +30,11 @@ public class HoneySecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.GET, "/catalog/**", "/uploads/**", "/manufacturers/**").permitAll()
                 .mvcMatchers(HttpMethod.POST, "/orders").permitAll()
                 .anyRequest().authenticated()
-                .and()
+            .and()
+                .formLogin().permitAll()
+            .and()
                 .httpBasic()
-                .and()
+            .and()
                 .csrf().disable();
     }
 
