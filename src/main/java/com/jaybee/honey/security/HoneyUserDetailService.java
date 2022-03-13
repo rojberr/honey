@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @AllArgsConstructor
-public class HoneyUserDetailService implements UserDetailsService, UserDetailsPasswordService {
+public class HoneyUserDetailService implements UserDetailsService {
 
     private final UserEntityRepository repository;
     private final AdminConfig config;
@@ -21,10 +21,5 @@ public class HoneyUserDetailService implements UserDetailsService, UserDetailsPa
         return repository.findByUsernameIgnoreCase(username)
                 .map(UserEntityDetails::new)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
-    }
-
-    @Override
-    public UserDetails updatePassword(UserDetails user, String newPassword) {
-        return null;
     }
 }
