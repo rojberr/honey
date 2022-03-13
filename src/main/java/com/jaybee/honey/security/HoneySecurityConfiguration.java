@@ -1,23 +1,35 @@
 package com.jaybee.honey.security;
 
 
+import com.jaybee.honey.user.db.UserEntityRepository;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Configuration
 @EnableGlobalMethodSecurity(securedEnabled = true)
+@EnableConfigurationProperties(AdminConfig.class)
 public class HoneySecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+    private final UserEntityRepository repository;
+    private final AdminConfig config;
 
     @Bean
     User systemUser() {
@@ -32,9 +44,9 @@ public class HoneySecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.GET, "/catalog/**", "/uploads/**", "/manufacturers/**").permitAll()
                 .mvcMatchers(HttpMethod.POST, "/orders", "/login").permitAll()
                 .anyRequest().authenticated()
-            .and()
+                .and()
                 .httpBasic()
-            .and()
+                .and()
                 .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.csrf().disable();
@@ -48,14 +60,21 @@ public class HoneySecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("user@test.test")
-                .password("{noop}secret")
-                .roles("USER")
-                .and()
-                .withUser("admin")
-                .password("{noop}admin")
-                .roles("ADMIN");
+    protected void configure(AuthenticationManagerBuilder auth) {
+        auth.authenticationProvider(authenticationProvider());
+    }
+
+    @Bean
+    AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        HoneyUserDetailService detailService = new HoneyUserDetailService(repository, config);
+        provider.setUserDetailsPasswordService(detailService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
