@@ -6,7 +6,7 @@ import com.jaybee.honey.order.domain.OrderStatus;
 import com.jaybee.honey.order.domain.Recipient;
 import lombok.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
@@ -47,7 +47,7 @@ public interface ManipulateOrderUseCase {
     class UpdateStatusCommand {
         Long orderId;
         OrderStatus status;
-        User user;
+        UserDetails user;
     }
 
 
