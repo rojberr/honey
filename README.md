@@ -1,6 +1,6 @@
 # Honey
 
-[![Build Status](https://app.travis-ci.com/rojberr/honey.svg?branch=master)](https://app.travis-ci.com/rojberr/honey)
+[![Build Status](https://app.travis-ci.com/rojberr/honey.svg?branch=master)](https://app.travis-ci.com/rojberr/honey.svg)
 
 This is an interactive shop site, where you can buy honey related things.
 
