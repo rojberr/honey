@@ -42,6 +42,7 @@ public class HoneySecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .mvcMatchers(HttpMethod.GET, "/catalog/**", "/uploads/**", "/manufacturers/**").permitAll()
                 .mvcMatchers(HttpMethod.POST, "/orders", "/login", "/users").permitAll()
+                .mvcMatchers( "/swagger-ui/**", "/v3/api-docs/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()
