@@ -8,6 +8,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -25,7 +26,7 @@ public class UserEntity extends BaseEntity {
     )
     @Column(name = "role")
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> roles;
+    private Set<String> roles = new HashSet<>();
 
 
     @CreatedDate
@@ -33,5 +34,11 @@ public class UserEntity extends BaseEntity {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public UserEntity(String username, String password) {
+        this.username = username;
+        this.password = password;
+        this.roles = Set.of("ROLE_USER");
+    }
 }
 
