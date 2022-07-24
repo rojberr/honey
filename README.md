@@ -1,5 +1,9 @@
 # Jaybeehoney
 
+Here you can buy honey made from delicious nectar out of fruit trees!
+
+![Nice README honey photo](photo-readme.jpeg)
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.0.6.
 
 ## Development server
