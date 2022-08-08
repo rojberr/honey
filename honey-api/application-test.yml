@@ -1,0 +1,12 @@
+# Database connection details
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/honeydb
+    username: admin
+    password: pass123
+    # Database driver
+    driver-class-name: org.postgresql.Driver
+    # SQL DEBUG
+    jpa.show-sql: true
+# Creation of database
+jpa.hibernate.ddl-auto: create
