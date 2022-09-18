@@ -1,0 +1,24 @@
+version: '3.5'
+services:
+
+  honey_api:
+    build:
+      context: ./honey-api
+      dockerfile: Dockerfile-honey-api
+    image: honey-api:0.0.1
+    container_name: honey_api
+    ports:
+      - "8081:8081"
+    depends_on:
+      - honey_db
+
+  honey_db:
+    image: postgres:14.4
+    container_name: honey_db
+    environment:
+      POSTGRES_DB: honey_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    restart: unless-stopped

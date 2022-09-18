@@ -1,0 +1,10 @@
+# Postgres database connection details
+spring:
+  datasource:
+    url: "jdbc:postgresql://honey_db:5432/honey_db"
+    username: "postgres"
+    password: "mypass"
+  # Creation of database
+  jpa:
+    hibernate:
+      ddl-auto: "create-drop"

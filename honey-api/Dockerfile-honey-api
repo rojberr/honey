@@ -1,0 +1,16 @@
+### STAGE 1: Build ###
+FROM gradle:7.5.1-jdk17-alpine AS build
+
+COPY . /usr/src/app
+WORKDIR /usr/src/app
+RUN chmod +x gradlew && ./gradlew build -x test
+
+### STAGE 2: Run ###
+FROM openjdk:17-alpine
+
+LABEL maintainer="rojberr"
+LABEL build_date="2022-09-19"
+
+COPY --from=build /usr/src/app/build/libs/honey-api-0.0.1-SNAPSHOT.jar app.jar
+
+ENTRYPOINT ["java", "-jar", "/app.jar"]
