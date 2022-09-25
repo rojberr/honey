@@ -4,7 +4,7 @@ This is an interactive shop site, where you can buy honey related things.
 
 Made by me, mostly for me. One day we may go live, cause my family owns a bee-garden. 
 
-![Photo by Anete Lusina from Pexels](photo-readme.jpeg)
+![Photo by Anete Lusina from Pexels](../assets/photo-readme.jpeg)
 
 # Usage 💡
 
@@ -15,12 +15,12 @@ To use it you can send requests at the host :point_right: [https://jaybeehoney-a
 Try (Heroku free tier apps sleep after 30 minutes of inactivity and need a minute to wake up): 
 > curl -X POST https://jaybeehoney-api.herokuapp.com/init  
 
-![img.png](img.png)
+![img.png](../assets/img.png)
 
 And then:
 > curl -X GET https://jaybeehoney-api.herokuapp.com/product
 
-![img_1.png](img_1.png)
+![img_1.png](../assets/img_1.png)
 
 
 Feel free to edit it and use it for your own eCommerce website. 🛒
@@ -48,7 +48,7 @@ The documentation was created using SpringFox Boot Starter tool.
 Another dependency was added, and not Swagger Honey API documentation can be accessed after launching the application
 and typing: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) in your browser address field. :)
 
-![Swagger image](swagger.png)
+![Swagger image](../assets/swagger.png)
 
 ## TODO
 
